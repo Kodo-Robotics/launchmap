@@ -175,3 +175,30 @@ tests:
             executable: talker
           - package: demo
             executable: listener
+  
+  - name: load_composable_nodes_star
+    description: LoadComposableNodes with starred list
+    input: |
+      from launch import LaunchDescription
+      from launch_ros.actions import LoadComposableNodes
+      from launch_ros.descriptions import ComposableNode
+
+      def generate_launch_description():
+          n1 = ComposableNode(package='pkg', plugin='A')
+          n2 = ComposableNode(package='pkg', plugin='B')
+          node_list = [n1, n2]
+
+          return LaunchDescription([
+              LoadComposableNodes(
+                  target_container='container',
+                  composable_node_descriptions=[*node_list]
+              )
+          ])
+    expected:
+      composable_nodes:
+        - target_container: container
+          composable_nodes:
+            - package: pkg
+              plugin: A
+            - package: pkg
+              plugin: B

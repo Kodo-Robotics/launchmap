@@ -18,6 +18,7 @@ from parser.handlers.node_handler import handle_node
 from parser.handlers.declare_argument_handler import handle_declare_argument
 from parser.handlers.include_handler import handle_include
 from parser.handlers.group_handler import handle_group_action
+from parser.handlers.load_composable_nodes_handler import handle_load_composable_nodes
 from parser.utils import resolve_starred_list
 
 class LaunchFileVisitor(ast.NodeVisitor):
@@ -123,4 +124,10 @@ class LaunchFileVisitor(ast.NodeVisitor):
             group_data = self.with_path(f"groups[{group_index}]", handle_group_action, node)
             if group_data:
                 target.setdefault("groups", []).append(group_data)
+
+        elif func_id == "LoadComposableNodes":
+            comp_node_index = next_index("composable_nodes")
+            comp_data = self.with_path(f"composable_nodes[{comp_node_index}]", handle_load_composable_nodes, node)
+            if comp_data:
+                target.setdefault("composable_nodes", []).append(comp_data)
         

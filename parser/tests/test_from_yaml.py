@@ -72,7 +72,12 @@ def test_undeclared_arguments(code, expected):
     result = parse_launch_string(code)
     assert result.get("arguments", []) == expected.get("arguments", [])
     assert result.get("nodes", []) == expected.get("nodes", [])
-    print(result.get("launch_argument_usages"))
-    print(expected.get("launch_argument_usages"))
     assert result.get("launch_argument_usages", []) == expected.get("launch_argument_usages", [])
     assert result.get("undeclared_launch_configurations", []) == expected.get("undeclared_launch_configurations", [])
+
+@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/composable_node_tests.yaml"))
+def test_composable_node_parsing(code, expected):
+    result = parse_launch_string(code)
+    print(result.get("composable_nodes"))
+    print(expected.get("composable_nodes"))
+    assert result.get("composable_nodes") == expected.get("composable_nodes")

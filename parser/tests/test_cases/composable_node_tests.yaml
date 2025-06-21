@@ -4,26 +4,28 @@ tests:
     input: |
       from launch import LaunchDescription
       from launch_ros.actions import LoadComposableNodes
-      from launch_ros.descriptions import ComposableNodes
+      from launch_ros.descriptions import ComposableNode
 
       def generate_launch_description():
           return LaunchDescription([
               LoadComposableNodes(
                   target_container='my_container',
                   composable_node_descriptions=[
-                      ComposableNode([
+                      ComposableNode(
                           package='demo_nodes_cpp',
                           plugin='demo_nodes_cpp::Talker',
                           name='talker_component'
-                      ])
+                      )
                   ]
               )
           ])
     expected:
       composable_nodes:
-        - package: demo_nodes_cpp
-          plugin: demo_nodes_cpp::Talker
-          name: talker_component
+        - target_container: my_container
+          composable_nodes:
+            - package: demo_nodes_cpp
+              plugin: demo_nodes_cpp::Talker
+              name: talker_component
   
   - name: composable_node_with_parameters
     description: Composable node with parameters and remappings
@@ -49,13 +51,15 @@ tests:
           ])
     expected:
       composable_nodes:
-        - package: my_pkg
-          plugin: my_pkg::MyPlugin
-          name: my_node
-          parameters:
-            - use_sim_time: True
-          remappings:
-            - ['/tf', 'tf']
+        - target_container: container
+          composable_nodes:
+            - package: my_pkg
+              plugin: my_pkg::MyPlugin
+              name: my_node
+              parameters:
+                - use_sim_time: True
+              remappings:
+                - ['/tf', 'tf']
   
   - name: composable_node_with_launch_config
     description: Composable node using LaunchConfiguration in parameters
@@ -63,7 +67,7 @@ tests:
       from launch import LaunchDescription
       from launch.substitions import LaunchConfiguration
       from launch_ros.actions import LoadComposableNodes
-      form launch_ros.descriptions import ComposableNode
+      from launch_ros.descriptions import ComposableNode
 
       def generate_launch_description():
           use_sim_time = LaunchConfiguration('use_sim_time')
@@ -83,10 +87,12 @@ tests:
       arguments:
         - name: use_sim_time
       composable_nodes:
-        - package: demo
-          plugin: demo::Comp
-          parameters:
-            - use_sim_time: "${LaunchConfiguration:use_sim_time}"
+        - target_container: container
+          composable_nodes:
+            - package: demo
+              plugin: demo::Comp
+              parameters:
+                - use_sim_time: "${LaunchConfiguration:use_sim_time}"
   
   - name: composable_node_from_variable
     description: ComposableNode is first assigned to a variable, then passed to LoadComposableNodes
@@ -109,9 +115,11 @@ tests:
           ])
     expected:
       composable_nodes:
-        - package: demo_pkg
-          plugin: demo_pkg::DemoPlugin
-          name: demo_component
+        - target_container: container
+          composable_nodes:
+            - package: demo_pkg
+              plugin: demo_pkg::DemoPlugin
+              name: demo_component
   
   - name: composable_node_var_with_parameters
     description: ComposableNode with parameters and remappings, passed via variable
@@ -125,7 +133,7 @@ tests:
               package='complex_pkg',
               plugin='complex_pkg::Plugin',
               parameters=[{'foo': 'bar'}],
-              remapping=[('in', 'out')]
+              remappings=[('in', 'out')]
           )
           return LaunchDescription([
               LoadComposableNodes(
@@ -135,12 +143,14 @@ tests:
           ])
     expected:
       composable_nodes:
-        - package: complex_pkg
-          plugin: complex_pkg::Plugin
-          parameters:
-            - foo: bar
-          remappings:
-            - ['in', 'out']
+        - target_container: container
+          composable_nodes:
+            - package: complex_pkg
+              plugin: complex_pkg::Plugin
+              parameters:
+                - foo: bar
+              remappings:
+                - ['in', 'out']
   
   - name: composable_node_mixed_inline_and_var
     description: One ComposableNode via variable, one inline
@@ -170,9 +180,11 @@ tests:
           ])
     expected:
       composable_nodes:
-        - package: pkg1
-          plugin: pkg1::Plugin1
-          name: n1
-        - package: pkg2
-          plugin: pkg2::Plugin2
-          name: n2
+        - target_container: container
+          composable_nodes:
+            - package: pkg1
+              plugin: pkg1::Plugin1
+              name: n1
+            - package: pkg2
+              plugin: pkg2::Plugin2
+              name: n2
