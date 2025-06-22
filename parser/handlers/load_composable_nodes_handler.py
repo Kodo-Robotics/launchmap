@@ -22,10 +22,15 @@ def handle_load_composable_nodes(node: ast.Call, ctx: ParseContext) -> dict:
         return None
     
     data = {}
-    composable_nodes = []
+    container = get_kwarg(node, "target_container")
+    if container:
+        container_ctx = ParseContext(ctx.visitor, field="target_container")
+        data["target_container"] = parse_value(container, container_ctx)
 
-    # Resolve children from positional or keyword args
+    composable_nodes = []
     children = []
+
+    # Resolve list of composable nodes
     if node.args and isinstance(node.args[0], ast.List):
         children = resolve_starred_list(node.args[0].elts, ctx.visitor)
     else:
@@ -37,22 +42,18 @@ def handle_load_composable_nodes(node: ast.Call, ctx: ParseContext) -> dict:
             if isinstance(resolved, ast.List):
                 children = resolve_starred_list(resolved.elts, ctx.visitor)
 
-    for child in children:
+    for idx, child in enumerate(children):
         actual_node = child
         if isinstance(child, ast.Name) and child.id in ctx.visitor.assignments:
             actual_node = ctx.visitor.assignments[child.id]
         
         if isinstance(actual_node, ast.Call) and getattr(actual_node.func, "id", None) == "ComposableNode":
-            node_data = handle_composable_node(actual_node, ctx)
+            path_label = f"composable_nodes[{idx}]"
+            node_data = ctx.visitor.with_path(path_label, handle_composable_node, actual_node)
             if node_data:
                 composable_nodes.append(node_data)
     
     if composable_nodes:
         data["composable_nodes"] = composable_nodes
-
-    # Include target container
-    container = get_kwarg(node, "target_container")
-    if container:
-        data["target_container"] = parse_value(container, ctx)
 
     return data if data else None

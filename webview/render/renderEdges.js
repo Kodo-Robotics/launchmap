@@ -68,6 +68,7 @@ function getEdgeColor(field) {
         case "parameters": return "#6aff6a";
         case "launch_arguments": return "#ffa500";
         case "namespace": return "#66ccff";
+        case "target_container": return "#26c6da"; 
         default: return "#ccc";
     }
 }

@@ -18,6 +18,7 @@ import { renderIncludesGroup } from './render/renderInclude.js';
 import { renderGroup } from './render/renderGroup.js';
 import { renderEdges } from './render/renderEdges.js';
 import { enableZoomAndPan } from './zoomPanController.js';
+import { renderComposableGroup } from './render/renderComposableGroup.js';
 
 const argumentRegistry = {};
 const blockRegistry = {};
@@ -60,6 +61,12 @@ function renderAll(data) {
     (data.groups || []).forEach((group, idx) => {
         renderGroup(group, `groups[${idx}]`, zoomLayer, layoutCtx, 
             { path: `groups[${idx}]`, blockRegistry, argumentRegistry, portRegistry, parsedData: data, renderEdges });
+    });
+
+    // Composable nodes
+    (data.composable_nodes || []).forEach((group, idx) => {
+        renderComposableGroup(group, `composable_nodes[${idx}]`, zoomLayer, layoutCtx,
+            { path: `composable_nodes[${idx}]`, blockRegistry, argumentRegistry, portRegistry, parsedData: data, renderEdges });
     });
 
     renderEdges(data, portRegistry);

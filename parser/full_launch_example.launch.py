@@ -14,34 +14,62 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
-from launch.substitutions import LaunchConfiguration, TextSubstitution
-
-from launch_ros.actions import Node
-
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node, LoadComposableNodes
+from launch_ros.descriptions import ComposableNode
 
 def generate_launch_description():
-   background_r_launch_arg = DeclareLaunchArgument(
-      'background_r', default_value=TextSubstitution(text='0')
-   )
-   background_g_launch_arg = DeclareLaunchArgument(
-      'background_g', default_value=TextSubstitution(text='84')
-   )
-   background_b_launch_arg = DeclareLaunchArgument(
-      'background_b', default_value=TextSubstitution(text='122')
-   )
+    use_sim_time = LaunchConfiguration('use_sim_time')
 
-   nodes = [background_r_launch_arg, background_g_launch_arg, background_b_launch_arg]
+    declare_sim_time = DeclareLaunchArgument(
+        'use_sim_time',
+        default_value='false',
+        description='Use simulation (Gazebo) clock if true'
+    )
 
-   return LaunchDescription([
-      *nodes,
-      Node(
-         package='turtlesim',
-         executable='turtlesim_node',
-         name='sim',
-         parameters=[{
-            'background_r': LaunchConfiguration('background_r'),
-            'background_g': LaunchConfiguration('background_g'),
-            'background_b': LaunchConfiguration('background_b'),
-         }]
-      ),
-   ])
+    # Regular nodes
+    robot_state_publisher = Node(
+        package='robot_state_publisher',
+        executable='robot_state_publisher',
+        name='state_pub',
+        parameters=[{'use_sim_time': use_sim_time}]
+    )
+
+    lifecycle_manager = Node(
+        package='nav2_lifecycle_manager',
+        executable='lifecycle_manager',
+        name='lifecycle_manager_navigation',
+        parameters=[{'use_sim_time': use_sim_time, 'autostart': True}]
+    )
+
+    # Composable nodes to be loaded into container
+    load_composable = LoadComposableNodes(
+        target_container='nav2_container',
+        composable_node_descriptions=[
+            ComposableNode(
+                package='nav2_map_server',
+                plugin='nav2_map_server::MapServer',
+                name='map_server',
+                parameters=[{'use_sim_time': use_sim_time}]
+            ),
+            ComposableNode(
+                package='nav2_planner',
+                plugin='nav2_planner::PlannerServer',
+                name='planner_server',
+                parameters=[{'use_sim_time': use_sim_time}]
+            ),
+            ComposableNode(
+                package='nav2_controller',
+                plugin='nav2_controller::ControllerServer',
+                name='controller_server',
+                parameters=[{'use_sim_time': use_sim_time}]
+            )
+        ]
+    )
+
+    return LaunchDescription([
+        declare_sim_time,
+        robot_state_publisher,
+        lifecycle_manager,
+        load_composable
+    ])

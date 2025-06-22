@@ -16,6 +16,7 @@ import { makeDraggable } from '../drag.js';
 import { renderNodeGroup } from './renderNode.js';
 import { renderIncludesGroup } from './renderInclude.js';
 import { renderSection } from './renderSection.js';
+import { renderComposableGroup } from './renderComposableGroup.js';
 
 export function renderGroup(group, prefix, container, layoutCtx, options = {}) {
     const ns = group.namespace || prefix;
@@ -71,6 +72,13 @@ export function renderGroup(group, prefix, container, layoutCtx, options = {}) {
     (group.groups || []).forEach((subgroup, idx) => {
         const subPrefix = `${prefix}.groups[${idx}]`;
         renderGroup(subgroup, subPrefix, body, innerLayout, {
+            ...childOptions,
+            path: subPrefix
+        });
+    });
+    (group.composable_nodes || []).forEach((subgroup, idx) => {
+        const subPrefix = `${prefix}.composable_nodes[${idx}]`;
+        renderComposableGroup(subgroup, subPrefix, body, innerLayout, {
             ...childOptions,
             path: subPrefix
         });
