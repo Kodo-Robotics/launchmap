@@ -5,19 +5,19 @@ import { renderSection } from './renderSection.js';
 export function renderComposableGroup(group, prefix, container, layoutCtx, options = {}) {
     const ns = group.namespace || prefix;
     const box = document.createElement("div");
-    box.className = "group-box";
+    box.className = "composable-group-box";
     box.style.left = `${layoutCtx.x}px`;
     box.style.top = `${layoutCtx.y}px`;
     box.style.position = "absolute";
 
     // Header
     const header = document.createElement("div");
-    header.className = "group-header";
+    header.className = "composable-group-header";
 
     // Title
     const title = document.createElement("div");
-    title.className = "group-title";
-    title.innerText = `🧩 Composable Group: ${ns}`;
+    title.className = "composable-group-header";
+    title.innerText = `🧩 Composable Container: ${ns}`;
     header.appendChild(title);
 
     // Target container
@@ -47,7 +47,7 @@ export function renderComposableGroup(group, prefix, container, layoutCtx, optio
 
     // Body
     const body = document.createElement("div");
-    body.className = "group-body";
+    body.className = "composable-group-body";
     box.appendChild(body);
 
     const innerLayout = { x: 20, y: 40 };
@@ -69,7 +69,7 @@ export function renderComposableGroup(group, prefix, container, layoutCtx, optio
     });
 
     requestAnimationFrame(() => {
-        const children = box.querySelectorAll(".node-block");
+        const children = box.querySelectorAll(".composable-node-block");
         let maxRight = 0;
         let maxBottom = 0;
 

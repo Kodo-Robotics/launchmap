@@ -140,6 +140,58 @@
   overflow: visible;
 }
 
+/* Composable Node Block */
+.composable-node-block {
+  border: 2px solid #c272ff;
+  background-color: #2a1f3d;
+  color: #e7d0ff;
+  border-radius: 8px;
+  padding: 10px;
+  min-width: 180px;
+  max-width: 260px;
+  box-shadow: 2px 2px 4px #000;
+  cursor: grab;
+  position: absolute;
+}
+
+.composable-node-title {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #d8a6ff;
+}
+
+.composable-group-box {
+  position: absolute;
+  border: 2px dashed #aa44ff;
+  border-radius: 10px;
+  box-shadow: 0 0 8px #441188;
+  background-color: rgba(60, 40, 80, 0.2);
+  z-index: 1;
+}
+
+.composable-group-header {  
+  background-color: #35174a;
+  color: #d6a6ff;
+  padding: 6px 10px;
+  font-weight: bold;
+  border-bottom: 1px solid #aa44ff;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  z-index: 2;
+  position: relative;
+}
+
+.composable-group-body {
+  background-color: rgba(90, 60, 120, 0.2);
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: visible;
+}
+
 #edge-layer {
   position: absolute;
   top: 0;

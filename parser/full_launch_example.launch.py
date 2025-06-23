@@ -20,11 +20,18 @@ from launch_ros.descriptions import ComposableNode
 
 def generate_launch_description():
     use_sim_time = LaunchConfiguration('use_sim_time')
+    target_container = LaunchConfiguration('target_container')
 
     declare_sim_time = DeclareLaunchArgument(
         'use_sim_time',
         default_value='false',
         description='Use simulation (Gazebo) clock if true'
+    )
+
+    declare_target_container = DeclareLaunchArgument(
+        'target_container',
+        default_value='nav2_container',
+        description=''
     )
 
     # Regular nodes
@@ -44,7 +51,7 @@ def generate_launch_description():
 
     # Composable nodes to be loaded into container
     load_composable = LoadComposableNodes(
-        target_container='nav2_container',
+        target_container=target_container,
         composable_node_descriptions=[
             ComposableNode(
                 package='nav2_map_server',
@@ -69,6 +76,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         declare_sim_time,
+        declare_target_container,
         robot_state_publisher,
         lifecycle_manager,
         load_composable

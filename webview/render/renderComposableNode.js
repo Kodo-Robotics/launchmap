@@ -14,13 +14,13 @@ export function renderComposableNodeGroup(container, nodes, namespace, layoutCtx
 
 function renderComposableNode(node, namespace, layoutCtx, options) {
     const block = document.createElement("div");
-    block.className = "node-block";
+    block.className = "composable-node-block";
     block.style.left = `${layoutCtx.x}px`;
     block.style.top = `${layoutCtx.y}px`;
     block.style.position = "absolute";
 
     const title = document.createElement("div");
-    title.className = "node-title";
+    title.className = "composable-node-title";
     title.innerText = `${namespace}/${node.name || node.plugin}`;
     block.appendChild(title);
 
