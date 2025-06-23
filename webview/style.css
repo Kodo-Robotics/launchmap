@@ -123,13 +123,15 @@
 }
 
 .group-box .node-block,
-.group-box .include-block {
+.group-box .include-block,
+.group-box .composable-node-block {
   position: absolute;
 }
 
 .node-block,
 .include-block,
-.argument-block {
+.argument-block,
+.composable-node-block {
   display: inline-block;
   padding: 10px;
   border-radius: 8px;
@@ -147,11 +149,8 @@
   color: #e7d0ff;
   border-radius: 8px;
   padding: 10px;
-  min-width: 180px;
-  max-width: 260px;
   box-shadow: 2px 2px 4px #000;
   cursor: grab;
-  position: absolute;
 }
 
 .composable-node-title {

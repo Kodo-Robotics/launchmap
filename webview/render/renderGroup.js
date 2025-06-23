@@ -95,7 +95,7 @@ export function renderGroup(group, prefix, container, layoutCtx, options = {}) {
     });
 
     requestAnimationFrame(() => {
-        const children = groupBox.querySelectorAll(".node-block, .include-block");
+        const children = groupBox.querySelectorAll(".node-block, .include-block, .composable-group-box");
         let maxRight = 0;
         let maxBottom = 0;
 
