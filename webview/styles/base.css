@@ -14,16 +14,13 @@
   top: 12px;
   right: 12px;
   z-index: 1000;
-
   background: linear-gradient(145deg, #0e61a9, #0a3f6b);
   color: #ffffff;
   border: 2px solid #1c90f3;
   border-radius: 8px;
-
   font-size: 14px;
   font-weight: bold;
   padding: 8px 14px;
-
   box-shadow: 0 0 8px rgba(28, 144, 243, 0.4);
   transition: all 0.2s ease;
   cursor: pointer;
@@ -41,6 +38,41 @@
 }
 
 #zoom-layer {
-    transform-origin: 0 0;
-    will-change: transform;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+#watermark {
+  position: fixed;
+  bottom: 12px;
+  left: 12px;
+  z-index: 1000;
+  background: white;
+  color: black;
+  border: black;
+  border-radius: 8px;
+  font-size: 20px;
+  font-weight: bold;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  justify-items: center;
+}
+
+#watermark img {
+  width: 65px;
+  margin-right: 10px;
+  border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -o-border-radius: 10px;
+}
+
+#watermark p {
+  font-family: 'League Spartan', sans-serif;
 }
