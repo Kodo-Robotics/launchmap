@@ -27,6 +27,11 @@ export function getWebviewHtml(
   const logoUri = webview.asWebviewUri(
     vscode.Uri.joinPath(extensionUri, "assets", "launchmap-logo.png")
   );
+  let announcement = {
+    text: "🚀 LaunchMap Discord Server is live — ",
+    click: "Join us now",
+    link: "https://discord.com/invite/38DvuSUn",
+  };
 
   return `
         <!DOCTYPE html>
@@ -39,7 +44,13 @@ export function getWebviewHtml(
 
         </head>
         <body>
-            <button id="export-btn">💾 Export JSON</button>
+          <div id="header">
+          <div id="announcement">
+              <p>${announcement.text} <a href="${announcement.link}" target="_blank">${announcement.click}</a></p>
+              <button>❌</button>
+          </div>
+              <button id="export-btn">💾 Export JSON</button>
+          </div>
             <div id="editor">
             </div>
             <div id="watermark">

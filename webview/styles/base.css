@@ -10,10 +10,6 @@
 }
 
 #export-btn {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 1000;
   background: linear-gradient(145deg, #0e61a9, #0a3f6b);
   color: #ffffff;
   border: 2px solid #1c90f3;
@@ -75,4 +71,62 @@
 
 #watermark p {
   font-family: 'League Spartan', sans-serif;
+}
+
+#header {
+  width: 95%;
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  z-index: 1000;
+}
+
+#announcement {
+  width: 80%;
+  background-color: white;
+  color: black;
+  padding: 0 6px;
+  display: flex;
+  justify-content: space-between;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  justify-items: center;
+}
+
+#announcement button {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  font-size: x-large;
+  font-weight: bolder;
+  display: flex;
+  justify-content: center;
+  justify-items: center;
+  margin: auto 0;
+  border-radius: 8px;
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border: 2px black solid;
+}
+
+#announcement p {
+  font-size: larger;
+  font-weight: bolder;
+}
+
+#announcement p a {
+  color: blue;
+}
+
+#announcement p a:hover {
+  border-bottom: blue solid 2px;
+}
+
+#announcement button:hover {
+  background-color: black;
 }
