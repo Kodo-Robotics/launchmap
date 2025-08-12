@@ -15,6 +15,7 @@
 import ast
 
 from parser.context import ParseContext
+from parser.parser.postprocessing import simplify_launch_configurations
 from parser.parser.registry import register_handler
 from parser.parser.utils.common import flatten_once, group_entities_by_type
 from parser.resolution.utils import resolve_call_signature
@@ -30,13 +31,25 @@ def handle_load_composable_nodes(node: ast.Call, context: ParseContext) -> dict:
     grouped = group_entities_by_type(resolved_flat)
     composable_nodes = grouped.get("unattached_composable_nodes", [])
 
+    # Add additional metadata to composable nodes
+    condition = kwargs.get("condition", {})
+    if condition:
+        for idx, _ in enumerate(composable_nodes):
+            composable_nodes[idx].update({"condition": condition})
+
     # Determine target container
-    target_container = kwargs.get("target_container")
+    target_container = simplify_launch_configurations(kwargs.get("target_container"))
     if not target_container:
         raise ValueError("LoadComposableNodes requires a target_container to be specified.")
+    if isinstance(target_container, list):
+        target_container = "".join(target_container)
 
     # Ensure group is registered
+    first_instance = not context.has_composable_node_group(target_container)
     context.register_composable_node_group(target_container, {"target_container": target_container})
     context.extend_composable_node_group(target_container, composable_nodes)
 
+    if first_instance:
+        return {"type": "ComposableNodeContainer", "target_container": target_container}
+    
     return {"type": "LoadComposableNodes", "target_container": target_container}

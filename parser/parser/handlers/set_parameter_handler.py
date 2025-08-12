@@ -23,6 +23,10 @@ from parser.resolution.utils import resolve_call_signature
 def handle_set_parameter(node: ast.Call, context: ParseContext) -> dict:
     args, kwargs = resolve_call_signature(node, context.engine)
 
+    if len(args) == 2:
+        kwargs["name"] = args[0]
+        kwargs["value"] = args[1]
+        
     name = kwargs.get("name")
     value = kwargs.get("value")
 

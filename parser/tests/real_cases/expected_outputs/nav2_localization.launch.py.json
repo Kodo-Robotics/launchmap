@@ -1,0 +1,408 @@
+{
+  "arguments": [
+    {
+      "default_value": "",
+      "description": "Top-level namespace",
+      "name": "namespace"
+    },
+    {
+      "default_value": "",
+      "description": "Full path to map yaml file to load",
+      "name": "map"
+    },
+    {
+      "default_value": "false",
+      "description": "Use simulation (Gazebo) clock if true",
+      "name": "use_sim_time"
+    },
+    {
+      "default_value": "${os.path.join:['${get_package_share_directory:nav2_bringup}', 'params', 'nav2_params.yaml']}",
+      "description": "Full path to the ROS2 parameters file to use for all launched nodes",
+      "name": "params_file"
+    },
+    {
+      "default_value": "true",
+      "description": "Automatically startup the nav2 stack",
+      "name": "autostart"
+    },
+    {
+      "default_value": "False",
+      "description": "Use composed bringup if True",
+      "name": "use_composition"
+    },
+    {
+      "default_value": "nav2_container",
+      "description": "the name of container that nodes will load in if use composition",
+      "name": "container_name"
+    },
+    {
+      "default_value": "False",
+      "description": "Whether to respawn if a node crashes. Applied when composition is disabled.",
+      "name": "use_respawn"
+    },
+    {
+      "default_value": "info",
+      "description": "log level",
+      "name": "log_level"
+    }
+  ],
+  "groups": [
+    {
+      "condition": "${IfCondition:not ${LaunchConfiguration:use_composition}}",
+      "actions": {
+        "nodes": [
+          {
+            "condition": "${IfCondition:${EqualsSubstitution:${LaunchConfiguration:map}, }}",
+            "package": "nav2_map_server",
+            "executable": "map_server",
+            "name": "map_server",
+            "output": "screen",
+            "respawn": "${LaunchConfiguration:use_respawn}",
+            "respawn_delay": 2.0,
+            "parameters": [
+              "${ParameterFile:${CustomHandler:RewrittenYaml(source_file=${LaunchConfiguration:params_file}, root_key=${LaunchConfiguration:namespace}, param_rewrites={}, convert_types=True)} allow_substs=True}"
+            ],
+            "arguments": [
+              "--ros-args",
+              "--log-level",
+              "${LaunchConfiguration:log_level}"
+            ],
+            "remappings": [
+              [
+                "/tf",
+                "tf"
+              ],
+              [
+                "/tf_static",
+                "tf_static"
+              ]
+            ]
+          },
+          {
+            "condition": "${IfCondition:${NotEqualsSubstitution:${LaunchConfiguration:map}, }}",
+            "package": "nav2_map_server",
+            "executable": "map_server",
+            "name": "map_server",
+            "output": "screen",
+            "respawn": "${LaunchConfiguration:use_respawn}",
+            "respawn_delay": 2.0,
+            "parameters": [
+              "${ParameterFile:${CustomHandler:RewrittenYaml(source_file=${LaunchConfiguration:params_file}, root_key=${LaunchConfiguration:namespace}, param_rewrites={}, convert_types=True)} allow_substs=True}",
+              {
+                "yaml_filename": "${LaunchConfiguration:map}"
+              }
+            ],
+            "arguments": [
+              "--ros-args",
+              "--log-level",
+              "${LaunchConfiguration:log_level}"
+            ],
+            "remappings": [
+              [
+                "/tf",
+                "tf"
+              ],
+              [
+                "/tf_static",
+                "tf_static"
+              ]
+            ]
+          },
+          {
+            "package": "nav2_amcl",
+            "executable": "amcl",
+            "name": "amcl",
+            "output": "screen",
+            "respawn": "${LaunchConfiguration:use_respawn}",
+            "respawn_delay": 2.0,
+            "parameters": [
+              "${ParameterFile:${CustomHandler:RewrittenYaml(source_file=${LaunchConfiguration:params_file}, root_key=${LaunchConfiguration:namespace}, param_rewrites={}, convert_types=True)} allow_substs=True}"
+            ],
+            "arguments": [
+              "--ros-args",
+              "--log-level",
+              "${LaunchConfiguration:log_level}"
+            ],
+            "remappings": [
+              [
+                "/tf",
+                "tf"
+              ],
+              [
+                "/tf_static",
+                "tf_static"
+              ]
+            ]
+          },
+          {
+            "package": "nav2_lifecycle_manager",
+            "executable": "lifecycle_manager",
+            "name": "lifecycle_manager_localization",
+            "output": "screen",
+            "arguments": [
+              "--ros-args",
+              "--log-level",
+              "${LaunchConfiguration:log_level}"
+            ],
+            "parameters": [
+              {
+                "autostart": "${LaunchConfiguration:autostart}"
+              },
+              {
+                "node_names": [
+                  "map_server",
+                  "amcl"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "namespace": "${LaunchConfiguration:namespace}",
+      "parameters": [
+        {
+          "use_sim_time": "${LaunchConfiguration:use_sim_time}"
+        }
+      ]
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:use_composition}}",
+      "actions": {
+        "composable_nodes_container": [
+          {
+            "target_container": "${LaunchConfiguration:namespace}/${LaunchConfiguration:container_name}",
+            "composable_nodes": [
+              {
+                "package": "nav2_map_server",
+                "plugin": "nav2_map_server::MapServer",
+                "name": "map_server",
+                "parameters": [
+                  "${ParameterFile:${CustomHandler:RewrittenYaml(source_file=${LaunchConfiguration:params_file}, root_key=${LaunchConfiguration:namespace}, param_rewrites={}, convert_types=True)} allow_substs=True}"
+                ],
+                "remappings": [
+                  [
+                    "/tf",
+                    "tf"
+                  ],
+                  [
+                    "/tf_static",
+                    "tf_static"
+                  ]
+                ],
+                "condition": "${IfCondition:${EqualsSubstitution:${LaunchConfiguration:map}, }}"
+              },
+              {
+                "package": "nav2_map_server",
+                "plugin": "nav2_map_server::MapServer",
+                "name": "map_server",
+                "parameters": [
+                  "${ParameterFile:${CustomHandler:RewrittenYaml(source_file=${LaunchConfiguration:params_file}, root_key=${LaunchConfiguration:namespace}, param_rewrites={}, convert_types=True)} allow_substs=True}",
+                  {
+                    "yaml_filename": "${LaunchConfiguration:map}"
+                  }
+                ],
+                "remappings": [
+                  [
+                    "/tf",
+                    "tf"
+                  ],
+                  [
+                    "/tf_static",
+                    "tf_static"
+                  ]
+                ],
+                "condition": "${IfCondition:${NotEqualsSubstitution:${LaunchConfiguration:map}, }}"
+              },
+              {
+                "package": "nav2_amcl",
+                "plugin": "nav2_amcl::AmclNode",
+                "name": "amcl",
+                "parameters": [
+                  "${ParameterFile:${CustomHandler:RewrittenYaml(source_file=${LaunchConfiguration:params_file}, root_key=${LaunchConfiguration:namespace}, param_rewrites={}, convert_types=True)} allow_substs=True}"
+                ],
+                "remappings": [
+                  [
+                    "/tf",
+                    "tf"
+                  ],
+                  [
+                    "/tf_static",
+                    "tf_static"
+                  ]
+                ]
+              },
+              {
+                "package": "nav2_lifecycle_manager",
+                "plugin": "nav2_lifecycle_manager::LifecycleManager",
+                "name": "lifecycle_manager_localization",
+                "parameters": [
+                  {
+                    "autostart": "${LaunchConfiguration:autostart}",
+                    "node_names": [
+                      "map_server",
+                      "amcl"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "namespace": "${LaunchConfiguration:namespace}",
+      "parameters": [
+        {
+          "use_sim_time": "${LaunchConfiguration:use_sim_time}"
+        }
+      ]
+    }
+  ],
+  "launch_argument_usages": [
+    {
+      "argument": "use_composition",
+      "path": "groups[0].condition"
+    },
+    {
+      "argument": "map",
+      "path": "groups[0].actions.nodes[0].condition"
+    },
+    {
+      "argument": "use_respawn",
+      "path": "groups[0].actions.nodes[0].respawn"
+    },
+    {
+      "argument": "params_file",
+      "path": "groups[0].actions.nodes[0].parameters[0]"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[0].actions.nodes[0].parameters[0]"
+    },
+    {
+      "argument": "log_level",
+      "path": "groups[0].actions.nodes[0].arguments[2]"
+    },
+    {
+      "argument": "map",
+      "path": "groups[0].actions.nodes[1].condition"
+    },
+    {
+      "argument": "use_respawn",
+      "path": "groups[0].actions.nodes[1].respawn"
+    },
+    {
+      "argument": "params_file",
+      "path": "groups[0].actions.nodes[1].parameters[0]"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[0].actions.nodes[1].parameters[0]"
+    },
+    {
+      "argument": "map",
+      "path": "groups[0].actions.nodes[1].parameters[1].yaml_filename"
+    },
+    {
+      "argument": "log_level",
+      "path": "groups[0].actions.nodes[1].arguments[2]"
+    },
+    {
+      "argument": "use_respawn",
+      "path": "groups[0].actions.nodes[2].respawn"
+    },
+    {
+      "argument": "params_file",
+      "path": "groups[0].actions.nodes[2].parameters[0]"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[0].actions.nodes[2].parameters[0]"
+    },
+    {
+      "argument": "log_level",
+      "path": "groups[0].actions.nodes[2].arguments[2]"
+    },
+    {
+      "argument": "log_level",
+      "path": "groups[0].actions.nodes[3].arguments[2]"
+    },
+    {
+      "argument": "autostart",
+      "path": "groups[0].actions.nodes[3].parameters[0].autostart"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[0].namespace"
+    },
+    {
+      "argument": "use_sim_time",
+      "path": "groups[0].parameters[0].use_sim_time"
+    },
+    {
+      "argument": "use_composition",
+      "path": "groups[1].condition"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[1].actions.composable_nodes_container[0].target_container"
+    },
+    {
+      "argument": "container_name",
+      "path": "groups[1].actions.composable_nodes_container[0].target_container"
+    },
+    {
+      "argument": "params_file",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[0].parameters[0]"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[0].parameters[0]"
+    },
+    {
+      "argument": "map",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[0].condition"
+    },
+    {
+      "argument": "params_file",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[1].parameters[0]"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[1].parameters[0]"
+    },
+    {
+      "argument": "map",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[1].parameters[1].yaml_filename"
+    },
+    {
+      "argument": "map",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[1].condition"
+    },
+    {
+      "argument": "params_file",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[2].parameters[0]"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[2].parameters[0]"
+    },
+    {
+      "argument": "autostart",
+      "path": "groups[1].actions.composable_nodes_container[0].composable_nodes[3].parameters[0].autostart"
+    },
+    {
+      "argument": "namespace",
+      "path": "groups[1].namespace"
+    },
+    {
+      "argument": "use_sim_time",
+      "path": "groups[1].parameters[0].use_sim_time"
+    }
+  ],
+  "environment_variables": [
+    {
+      "name": "RCUTILS_LOGGING_BUFFERED_STREAM",
+      "value": "1"
+    }
+  ]
+}

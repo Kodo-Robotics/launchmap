@@ -34,11 +34,14 @@ def handle_group_action(node: ast.Call, context: ParseContext) -> dict:
     resolved_flat = flatten_once(raw_expr)
 
     namespace = None
+    parameters = []
     actions = []
     for item in resolved_flat:
-        if isinstance(item, dict) and item.get("type") == "PushRosNamespace":
+        if isinstance(item, dict) and item.get("type") == "PushROSNamespace":
             namespace = item.get("namespace")
             context.push_namespace(namespace)
+        elif isinstance(item, dict) and item.get("type") == "SetParameter":
+            parameters.append({item.get("name"): item.get("value")})
         else:
             actions.append(item)
 
@@ -55,5 +58,7 @@ def handle_group_action(node: ast.Call, context: ParseContext) -> dict:
 
     if namespace:
         result["namespace"] = namespace
+    if parameters:
+        result["parameters"] = parameters
 
     return result

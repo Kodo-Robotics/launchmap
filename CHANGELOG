@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.1.9] - 2025-08-12
+
+### Added
+- Parser support for `EqualsSubstitution` and `NotEqualsSubstitution`
+- Test coverage for `nav2_localization.launch.py`
+- LaunchMap Watermark
+
+### Fixed
+- Composable node containers visualization without being called in launch description
+
 ## [0.1.8] - 2025-08-08
 
 ### Added

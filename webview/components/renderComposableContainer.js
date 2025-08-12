@@ -43,7 +43,7 @@ export function renderComposableContainer(group, options = {}) {
 
   // Render additional sections
   const metaSections = [
-    { key: 'container', icon: '📛', label: 'Container', value: group.target_container },
+    { key: 'target_container', icon: '📛', label: 'Container', value: group.target_container },
     { key: 'package', icon: '📦', label: 'Package', value: group.package },
     { key: 'executable', icon: '▶️', label: 'Executable', value: group.executable },
     { key: 'output', icon: '🖥️', label: 'Output', value: group.output }

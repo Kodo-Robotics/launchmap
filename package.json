@@ -2,7 +2,7 @@
     "name": "launchmap",
     "displayName": "LaunchMap",
     "description": "Visualize ROS2 Launch Files",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "publisher": "kodorobotics",
     "icon": "assets/launchmap-logo.png",
     "bugs": {

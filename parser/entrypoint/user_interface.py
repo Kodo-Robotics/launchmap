@@ -14,6 +14,7 @@
 
 from parser.entrypoint.parser_runner import parse_launch_file
 from parser.parser.introspection_utils import (
+    collect_composable_node_containers,
     collect_environment_variable_usages,
     collect_event_handler_usages,
     collect_launch_config_usages,
@@ -29,10 +30,8 @@ def parse_and_format_launch_file(filepath: str) -> dict:
     """
     raw = parse_launch_file(filepath)
     grouped = group_entities_by_type(raw["parsed"] + raw["additional_components"])
-
-    composable_node_containers = raw.get("composable_node_containers")
-    if composable_node_containers:
-        grouped["composable_nodes_container"] = composable_node_containers
+    
+    grouped = collect_composable_node_containers(grouped, raw["composable_containers"])
 
     launch_argument_usages = collect_launch_config_usages(grouped)
     if launch_argument_usages:

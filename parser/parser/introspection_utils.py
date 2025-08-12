@@ -161,3 +161,30 @@ def collect_python_variable_usages(grouped: dict) -> list[dict]:
             walk(entry, f"{top_key}[{idx}]")
 
     return usages
+
+def collect_composable_node_containers(grouped: dict, composable_containers: dict) -> dict:
+    """
+    Recursively walk the grouped data and return the instances of composable_nodes_container
+    """
+    def walk(obj):
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                if key == "composable_nodes_container":
+                    containers = obj.get("composable_nodes_container")
+                    for idx, container in enumerate(containers):
+                        container_name = container.get("target_container")
+                        new_container = composable_containers.get(container_name, {})
+                        obj[key][idx] = new_container
+                else:
+                    walk(value)
+
+        elif isinstance(obj, list):
+            for idx, item in enumerate(obj):
+                walk(item)
+
+        elif isinstance(obj, tuple):
+            for idx, item in enumerate(obj):
+                walk(item)
+
+    walk(grouped)
+    return grouped
