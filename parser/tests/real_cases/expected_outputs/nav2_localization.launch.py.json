@@ -50,12 +50,6 @@
     {
       "condition": "${IfCondition:not ${LaunchConfiguration:use_composition}}",
       "actions": {
-        "parameters": [
-          {
-            "name": "use_sim_time",
-            "value": "${LaunchConfiguration:use_sim_time}"
-          }
-        ],
         "nodes": [
           {
             "condition": "${IfCondition:${EqualsSubstitution:${LaunchConfiguration:map}, }}",
@@ -164,17 +158,16 @@
           }
         ]
       },
-      "namespace": "${LaunchConfiguration:namespace}"
+      "namespace": "${LaunchConfiguration:namespace}",
+      "parameters": [
+        {
+          "use_sim_time": "${LaunchConfiguration:use_sim_time}"
+        }
+      ]
     },
     {
       "condition": "${IfCondition:${LaunchConfiguration:use_composition}}",
       "actions": {
-        "parameters": [
-          {
-            "name": "use_sim_time",
-            "value": "${LaunchConfiguration:use_sim_time}"
-          }
-        ],
         "composable_nodes_container": [
           {
             "target_container": "${LaunchConfiguration:namespace}/${LaunchConfiguration:container_name}",
@@ -256,17 +249,18 @@
           }
         ]
       },
-      "namespace": "${LaunchConfiguration:namespace}"
+      "namespace": "${LaunchConfiguration:namespace}",
+      "parameters": [
+        {
+          "use_sim_time": "${LaunchConfiguration:use_sim_time}"
+        }
+      ]
     }
   ],
   "launch_argument_usages": [
     {
       "argument": "use_composition",
       "path": "groups[0].condition"
-    },
-    {
-      "argument": "use_sim_time",
-      "path": "groups[0].actions.parameters[0].value"
     },
     {
       "argument": "map",
@@ -341,12 +335,12 @@
       "path": "groups[0].namespace"
     },
     {
-      "argument": "use_composition",
-      "path": "groups[1].condition"
+      "argument": "use_sim_time",
+      "path": "groups[0].parameters[0].use_sim_time"
     },
     {
-      "argument": "use_sim_time",
-      "path": "groups[1].actions.parameters[0].value"
+      "argument": "use_composition",
+      "path": "groups[1].condition"
     },
     {
       "argument": "namespace",
@@ -399,6 +393,10 @@
     {
       "argument": "namespace",
       "path": "groups[1].namespace"
+    },
+    {
+      "argument": "use_sim_time",
+      "path": "groups[1].parameters[0].use_sim_time"
     }
   ],
   "environment_variables": [
