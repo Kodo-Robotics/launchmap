@@ -46,7 +46,8 @@ export function renderGroup(group, options = {}) {
   // Render additional sections
   const metaSections = [
     { key: 'namespace', icon: '🧭', label: 'Namespace', value: ns },
-    { key: 'condition', icon: '❓', label: 'Condition', value: group.condition }
+    { key: 'condition', icon: '❓', label: 'Condition', value: group.condition },
+    { key: 'parameters', icon: '⚙️', label: 'Params', value: group.parameters }
   ];
 
   metaSections.forEach(({ key, icon, label, value }) => {
