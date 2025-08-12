@@ -20,16 +20,16 @@ tests:
                 executable: basic
 
   - name: group_with_namespace
-    description: GroupAction with PushRosNamespace
+    description: GroupAction with PushROSNamespace
     input: |
       from launch import LaunchDescription
-      from launch.actions import GroupAction, PushRosNamespace
+      from launch.actions import GroupAction, PushROSNamespace
       from launch_ros.actions import Node
 
       def generate_launch_description():
           return LaunchDescription([
               GroupAction([
-                  PushRosNamespace("robot1"),
+                  PushROSNamespace("robot1"),
                   Node(package="demo", executable="ns_node")
               ])
           ])
@@ -111,10 +111,10 @@ tests:
                 executable: n2
   
   - name: group_with_namespace_and_variable
-    description: PushRosNamespace from config + children from variable
+    description: PushROSNamespace from config + children from variable
     input: |
       from launch import LaunchDescription
-      from launch.actions import GroupAction, PushRosNamespace, DeclareLaunchArgument
+      from launch.actions import GroupAction, PushROSNamespace, DeclareLaunchArgument
       from launch.substitutions import LaunchConfiguration
       from launch_ros.actions import Node
 
@@ -126,7 +126,7 @@ tests:
           return LaunchDescription([
               declare,
               GroupAction([
-                  PushRosNamespace(ns),
+                  PushROSNamespace(ns),
                   *group_nodes
               ])
           ])
@@ -149,15 +149,15 @@ tests:
     description: Nested GroupAction with namespace and nodes
     input: |
       from launch import LaunchDescription
-      from launch.actions import GroupAction, PushRosNamespace
+      from launch.actions import GroupAction, PushROSNamespace
       from launch_ros.actions import Node
 
       def generate_launch_description():
           return LaunchDescription([
               GroupAction([
-                  PushRosNamespace("outer_ns"),
+                  PushROSNamespace("outer_ns"),
                   GroupAction([
-                      PushRosNamespace("inner_ns"),
+                      PushROSNamespace("inner_ns"),
                       Node(package="demo", executable="deep")
                   ])
               ])

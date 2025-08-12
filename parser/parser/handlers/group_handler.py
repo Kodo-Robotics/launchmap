@@ -36,7 +36,7 @@ def handle_group_action(node: ast.Call, context: ParseContext) -> dict:
     namespace = None
     actions = []
     for item in resolved_flat:
-        if isinstance(item, dict) and item.get("type") == "PushRosNamespace":
+        if isinstance(item, dict) and item.get("type") == "PushROSNamespace":
             namespace = item.get("namespace")
             context.push_namespace(namespace)
         else:

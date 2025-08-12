@@ -82,7 +82,7 @@ tests:
     description: LaunchConfiguration used in PushRosNamespace inside GroupAction
     input: |
       from launch import LaunchDescription
-      from launch.actions import DeclareLaunchArgument, GroupAction, PushRosNamespace
+      from launch.actions import DeclareLaunchArgument, GroupAction, PushROSNamespace
       from launch.substitutions import LaunchConfiguration
       from launch_ros.actions import Node
 
@@ -90,7 +90,7 @@ tests:
           return LaunchDescription([
               DeclareLaunchArgument("robot_namespace", default_value="robot1"),
               GroupAction([
-                  PushRosNamespace(LaunchConfiguration("robot_namespace")),
+                  PushROSNamespace(LaunchConfiguration("robot_namespace")),
                   Node(package='demo', executable='x')
               ])
           ])

@@ -15,6 +15,7 @@
 import ast
 
 from parser.context import ParseContext
+from parser.parser.postprocessing import simplify_launch_configurations
 from parser.parser.registry import register_handler
 from parser.parser.utils.common import flatten_once, group_entities_by_type
 from parser.resolution.utils import resolve_call_signature
@@ -31,9 +32,11 @@ def handle_load_composable_nodes(node: ast.Call, context: ParseContext) -> dict:
     composable_nodes = grouped.get("unattached_composable_nodes", [])
 
     # Determine target container
-    target_container = kwargs.get("target_container")
+    target_container = simplify_launch_configurations(kwargs.get("target_container"))
     if not target_container:
         raise ValueError("LoadComposableNodes requires a target_container to be specified.")
+    if isinstance(target_container, list):
+        target_container = "".join(target_container)
 
     # Ensure group is registered
     context.register_composable_node_group(target_container, {"target_container": target_container})
