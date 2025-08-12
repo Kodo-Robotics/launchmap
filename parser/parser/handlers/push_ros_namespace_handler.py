@@ -19,7 +19,8 @@ from parser.parser.registry import register_handler
 from parser.resolution.utils import resolve_call_signature
 
 
-@register_handler("PushROSNamespace", "launch_ros.actions.PushROSNamespace")
+@register_handler("PushROSNamespace", "launch_ros.actions.PushROSNamespace",
+                  "PushRosNamespace", "launch_ros.actions.PushRosNamespace")
 def handle_push_ros_namespace(node: ast.Call, context: ParseContext):
     args, kwargs = resolve_call_signature(node, context.engine)
 

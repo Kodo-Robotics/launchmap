@@ -89,14 +89,17 @@ class ParseContext:
 
     ## Composable node groups
 
+    def has_composable_node_group(self, container_name: str):
+        return container_name in self.composable_node_groups
+
     def register_composable_node_group(self, container_name: str, container_metadata: dict):
         self.composable_node_groups[container_name].update(container_metadata)
 
     def extend_composable_node_group(self, container_name: str, nodes):
         self.composable_node_groups[container_name]["composable_nodes"].extend(nodes)
 
-    def get_composable_node_groups(self) -> list[dict]:
-        results = []
+    def get_composable_node_groups(self) -> dict:
+        results = {}
         for name, data in self.composable_node_groups.items():
             if not data["composable_nodes"]:
                 continue
@@ -109,8 +112,7 @@ class ParseContext:
                 if value not in (None, "", [], {}):
                     entry[key] = value
 
-            results.append(entry)
-
+            results[name] = entry
         return results
 
     ## Utility

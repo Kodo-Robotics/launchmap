@@ -31,6 +31,12 @@ def handle_load_composable_nodes(node: ast.Call, context: ParseContext) -> dict:
     grouped = group_entities_by_type(resolved_flat)
     composable_nodes = grouped.get("unattached_composable_nodes", [])
 
+    # Add additional metadata to composable nodes
+    condition = kwargs.get("condition", {})
+    if condition:
+        for idx, _ in enumerate(composable_nodes):
+            composable_nodes[idx].update({"condition": condition})
+
     # Determine target container
     target_container = simplify_launch_configurations(kwargs.get("target_container"))
     if not target_container:
@@ -39,7 +45,11 @@ def handle_load_composable_nodes(node: ast.Call, context: ParseContext) -> dict:
         target_container = "".join(target_container)
 
     # Ensure group is registered
+    first_instance = not context.has_composable_node_group(target_container)
     context.register_composable_node_group(target_container, {"target_container": target_container})
     context.extend_composable_node_group(target_container, composable_nodes)
 
+    if first_instance:
+        return {"type": "ComposableNodeContainer", "target_container": target_container}
+    
     return {"type": "LoadComposableNodes", "target_container": target_container}
