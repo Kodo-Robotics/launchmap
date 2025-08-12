@@ -1,0 +1,55 @@
+#watermark {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 1000;
+    background: none;
+    color: rgba(255, 255, 255, 0.82);
+    border-radius: 16px;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 0;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    opacity: 0.35;
+    user-select: none;
+    pointer-events: none;
+}
+
+#watermark img {
+    width: 60px;
+    height: 60px;
+    margin-right: 0;
+    border-radius: 10px;
+    object-fit: contain;
+    opacity: 0.95;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+    pointer-events: none;
+}
+
+#watermark p {
+    font-family: 'League Spartan', sans-serif;
+    font-weight: 700;
+    margin: 0;
+    color: rgba(220, 220, 220, 0.9);
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    user-select: none;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    #watermark {
+        font-size: 24px;
+        gap: 10px;
+    }
+
+    #watermark img {
+        width: 40px;
+        height: 40px;
+    }
+}

@@ -14,24 +14,38 @@
 
 import * as vscode from 'vscode';
 
-export function getWebviewHtml(webview: vscode.Webview, extensionUri: vscode.Uri): string {
-  const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'webview', 'script.js'));
-  const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'webview', 'style.css'));
+export function getWebviewHtml(
+  webview: vscode.Webview,
+  extensionUri: vscode.Uri
+): string {
+  const scriptUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'webview', 'script.js')
+  );
+  const styleUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'webview', 'style.css')
+  );
+
+  const logoUri = webview.asWebviewUri(
+    vscode.Uri.joinPath(extensionUri, 'assets', 'launchmap-logo.png')
+  );
 
   return `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval' ${webview.cspSource}; style-src ${webview.cspSource};">
-            <link href="${styleUri}" rel="stylesheet">
-        </head>
-        <body>
-            <button id="export-btn">💾 Export JSON</button>
-            <div id="editor">
-            </div>
-            <script src="${scriptUri}" type="module"></script>
-        </body>
-        </html>
-    `;
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'unsafe-inline' 'unsafe-eval' ${webview.cspSource}; style-src ${webview.cspSource};">
+      <link href="${styleUri}" rel="stylesheet">
+  </head>
+  <body>
+      <button id="export-btn">💾 Export JSON</button>
+      <div id="editor"></div>
+      <div id="watermark">
+        <img src="${logoUri}" alt="Logo" />
+        <p>LaunchMap</p>
+      </div>
+      <script src="${scriptUri}" type="module"></script>
+  </body>
+  </html>
+`;
 }
