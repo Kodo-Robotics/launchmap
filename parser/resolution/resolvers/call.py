@@ -15,7 +15,7 @@
 import ast
 import warnings
 
-from parser.parser.dispatcher import dispatch_call
+from parser.parser.python.dispatcher import dispatch_call
 from parser.parser.postprocessing import simplify_launch_configurations
 from parser.resolution.resolution_registry import register_resolver
 

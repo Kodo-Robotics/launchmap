@@ -14,7 +14,7 @@
 
 import ast
 
-from parser.parser.registry import register_handler
+from parser.parser.python.registry import register_handler
 
 
 @register_handler("perform")

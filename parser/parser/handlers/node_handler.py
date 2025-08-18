@@ -15,7 +15,7 @@
 import ast
 
 from parser.context import ParseContext
-from parser.parser.registry import register_handler
+from parser.parser.python.registry import register_handler
 from parser.resolution.utils import resolve_call_kwargs
 
 

@@ -14,7 +14,7 @@
 
 import inspect
 
-from parser.parser.registry import register_handler
+from parser.parser.python.registry import register_handler
 
 
 def register_user_handler(type_name: str):
