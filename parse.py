@@ -33,8 +33,6 @@ def main():
 
     if os.path.isdir(args.plugin_dir):
         load_user_handlers_from_directory(args.plugin_dir)
-    else:
-        print(f"Warning: Plugin directory not found: {args.plugin_dir}")
 
     try:
         result = parse_and_format_launch_file(args.launch_file)
