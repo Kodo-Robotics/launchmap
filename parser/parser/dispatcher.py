@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import ast
+from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
 from parser.parser.loader import register_builtin_handlers
@@ -37,3 +38,22 @@ def dispatch_call(node: ast.Call, context: ParseContext) -> dict:
         raise ValueError(f"Unrecognized launch construct: '{func_name}'")
 
     return handler(node, context)
+
+def dispatch_element(el: ET.Element, context: ParseContext) -> dict:
+    """
+    Dispatch a launch construct (XML element) to its registered handler.
+
+    - Uses the raw tag name ('node', 'include', 'group')
+    - Looks up the handler in registry
+    - Delegates to handler
+    """
+    tag = _strip_ns(el.tag)
+    handler = get_handler(tag)
+
+    if not handler:
+        raise ValueError(f"Unrecognized XML launch construct: <{tag}>")
+
+    return handler(el, context)
+
+def _strip_ns(tag: str) -> str:
+    return tag.split('}')[-1]
