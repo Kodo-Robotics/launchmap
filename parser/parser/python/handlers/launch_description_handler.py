@@ -12,24 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from xml.etree.ElementTree import ET
+import ast
 
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
-from parser.parser.utils.xml_utils import dispatch_xml
+from parser.parser.utils import flatten_once
+from parser.resolution.utils import resolve_call_signature
 
 
-@register_handler("node")
-def handle_node(node: ast.Call, context: ParseContext) -> dict:
-    """
-    Handle a launch_ros Node(...)
-    Adds namespace context if not explicitly passed.
-    """
-    kwargs = resolve_call_kwargs(node, context.engine)
+@register_handler("LaunchDescription", "launch.LaunchDescription")
+def handle_launch_description(node: ast.Call, context: ParseContext) -> dict:
+    args, _ = resolve_call_signature(node, context.engine)
 
-    if "namespace" not in kwargs:
-        ns = context.current_namespace()
-        if ns:
-            kwargs["namespace"] = ns
+    if args:
+        arg = args[0]
+        return flatten_once(arg) if isinstance(arg, list) else [arg]
 
-    return {"type": "Node", **kwargs}
+    return []

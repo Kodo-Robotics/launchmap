@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from parser.parser.postprocessing import simplify_launch_configurations
-from parser.parser.user_handler import register_user_handler
+from parser.parser.python.user_handler import register_user_handler
 from parser.resolution.utils import resolve_call_kwargs
 
 

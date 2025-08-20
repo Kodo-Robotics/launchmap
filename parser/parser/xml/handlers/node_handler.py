@@ -12,18 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import importlib
-import os
-import pkgutil
+from xml.etree.ElementTree import ET
+
+from parser.context import ParseContext
+from parser.parser.registry import register_handler
+from parser.parser.xml.utils import dispatch_xml
 
 
-def register_builtin_handlers():
+@register_handler("node")
+def handle_node(node: ast.Call, context: ParseContext) -> dict:
     """
-    Auto import all modules in parsers.handlers to trigger @register_handler decorators.
+    Handle a launch_ros Node(...)
+    Adds namespace context if not explicitly passed.
     """
-    import parser.parser.handlers
+    kwargs = resolve_call_kwargs(node, context.engine)
 
-    package_dir = os.path.dirname(parser.parser.handlers.__file__)
-    for _, module_name, _ in pkgutil.iter_modules([package_dir]):
-        importlib.import_module(f"parser.parser.handlers.{module_name}")
-        importlib.import_module(f"parser.parser.xml_handlers.{module_name}")
+    if "namespace" not in kwargs:
+        ns = context.current_namespace()
+        if ns:
+            kwargs["namespace"] = ns
+
+    return {"type": "Node", **kwargs}

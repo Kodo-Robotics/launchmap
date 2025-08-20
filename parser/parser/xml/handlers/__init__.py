@@ -11,10 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-
-def is_symbolic(value):
-    """
-    Determines if a value is symbolic (non-concrete) object from the resolution engine.
-    """
-    return isinstance(value, dict) and "type" in value

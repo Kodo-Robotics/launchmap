@@ -17,8 +17,8 @@ import ast
 from parser.context import ParseContext
 from parser.parser.postprocessing import simplify_launch_configurations
 from parser.parser.registry import register_handler
-from parser.parser.utils.ast_utils import extract_opaque_function
-from parser.parser.utils.common import group_entities_by_type
+from parser.parser.python.utils import extract_opaque_function
+from parser.parser.utils import group_entities_by_type
 from parser.resolution.resolution_engine import ResolutionEngine
 from parser.resolution.utils import bind_function_args, resolve_call_signature
 

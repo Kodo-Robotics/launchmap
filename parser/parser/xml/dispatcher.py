@@ -15,28 +15,24 @@
 from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
-from parser.entrypoint.common import build_result
-from parser.parser.xml.dispatcher import dispatch_element
+from parser.parser.registry import get_handler
+from parser.parser.xml.loader import register_builtin_handlers
 from parser.parser.xml.utils import strip_ns
 
+# register_builtin_handlers()
 
-def parse_xml_launch_file(filepath: str) -> dict:
+def dispatch_element(el: ET.Element, context: ParseContext) -> dict:
     """
-    Entrypoint: parses a launch file and returns structured output
-    Detects <launch>
+    Dispatch a launch construct (XML element) to its registered handler.
+
+    - Uses the raw tag name ('node', 'include', 'group')
+    - Looks up the handler in registry
+    - Delegates to handler
     """
-    root = ET.parse(filepath).getroot()
-    tag = strip_ns(root.tag)
-    if tag != "launch":
-        raise ValueError(f"Expected <launch> as root tag, found <{tag}")
+    tag = strip_ns(el.tag)
+    handler = get_handler(tag)
 
-    # Set up shared context
-    context = ParseContext()
-    context.current_file = filepath
+    if not handler:
+        raise ValueError(f"Unrecognized XML launch construct: <{tag}>")
 
-    parsed = []
-    for child in list(root):
-        result = dispatch_element(child, context)
-        parsed.append(result)
-
-    return build_result(filepath, parsed)
+    return handler(el, context)

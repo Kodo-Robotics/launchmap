@@ -12,20 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ast
-
-from parser.context import ParseContext
-from parser.parser.registry import register_handler
-from parser.parser.utils.common import flatten_once
-from parser.resolution.utils import resolve_call_signature
+import importlib
+import os
+import pkgutil
 
 
-@register_handler("LaunchDescription", "launch.LaunchDescription")
-def handle_launch_description(node: ast.Call, context: ParseContext) -> dict:
-    args, _ = resolve_call_signature(node, context.engine)
+def register_builtin_handlers():
+    """
+    Auto import all modules in parsers.handlers to trigger @register_handler decorators.
+    """
+    import parser.parser.python.handlers
 
-    if args:
-        arg = args[0]
-        return flatten_once(arg) if isinstance(arg, list) else [arg]
-
-    return []
+    package_dir = os.path.dirname(parser.parser.python.handlers.__file__)
+    for _, module_name, _ in pkgutil.iter_modules([package_dir]):
+        importlib.import_module(f"parser.parser.python.handlers.{module_name}")

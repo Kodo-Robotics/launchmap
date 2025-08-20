@@ -12,13 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parser.parser.python.user_handler import register_user_handler
+import importlib
+import os
+import pkgutil
 
 
-@register_user_handler("MyCustomLaunchThing")
-def handle_custom_launch_thing(node, context):
-    return {
-        "type": "CustomHandler",
-        "type_name": "MyCustomLaunchThing",
-        "metadata": {"info": "example"},
-    }
+def register_builtin_handlers():
+    """
+    Auto import all modules in parsers.handlers to trigger @register_handler decorators.
+    """
+    import parser.parser.xml.handlers
+
+    package_dir = os.path.dirname(parser.parser.xml.handlers.__file__)
+    for _, module_name, _ in pkgutil.iter_modules([package_dir]):
+        importlib.import_module(f"parser.parser.xml.handlers.{module_name}")

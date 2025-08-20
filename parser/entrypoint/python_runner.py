@@ -16,7 +16,7 @@ import ast
 
 from parser.context import ParseContext
 from parser.entrypoint.common import build_result
-from parser.parser.utils.ast_utils import collect_function_defs
+from parser.parser.python.utils import collect_function_defs
 from parser.resolution.resolution_engine import ResolutionEngine
 
 
