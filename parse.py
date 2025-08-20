@@ -12,24 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import sys
 import json
 import argparse
 from parser.entrypoint.user_interface import parse_and_format_launch_file
 from parser.plugin_loader import load_user_handlers_from_directory
 
+DEFAULT_PLUGIN_DIR = os.path.join(os.path.dirname(__file__), "parser", "custom_handler")
 
 def main():
     parser = argparse.ArgumentParser(description="Parse a ROS2 launch file.")
     parser.add_argument("launch_file", help="Path to launch file to parse.")
     parser.add_argument(
-        "--plugin-dir", help="Directory containing user-defined custom handlers."
+        "--plugin-dir", help="Directory containing user-defined custom handlers.",
+        default = DEFAULT_PLUGIN_DIR
     )
 
     args = parser.parse_args()
 
-    if args.plugin_dir:
+    if os.path.isdir(args.plugin_dir):
         load_user_handlers_from_directory(args.plugin_dir)
+    else:
+        print(f"Warning: Plugin directory not found: {args.plugin_dir}")
 
     try:
         result = parse_and_format_launch_file(args.launch_file)
