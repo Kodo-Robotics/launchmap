@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import io
 from typing import List
 from parser.context import ParseContext
 import xml.etree.ElementTree as ET
@@ -38,11 +39,7 @@ def detect_format_from_content(code: str) -> str:
     """
     Return 'xml' if it parses as XML with <launch> root; otherwise 'python'.
     """
-    try:
-        root = ET.fromstring(code)
-        if root.tag.split('}')[-1] == "launch":
-            return "xml"
-    except ET.ParseError:
-        pass
+    head = code.lstrip().lower()
+    if head.startswith("<?xml") or head.startswith("<launch"):
+        return "xml"
     return "python"
-

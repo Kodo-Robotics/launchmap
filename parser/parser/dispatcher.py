@@ -19,6 +19,7 @@ from parser.context import ParseContext
 from parser.parser.loader import register_builtin_handlers
 from parser.parser.registry import get_handler
 from parser.resolution.utils import get_func_name
+from parser.utils.xml_utils import strip_ns
 
 register_builtin_handlers()
 
@@ -47,13 +48,10 @@ def dispatch_element(el: ET.Element, context: ParseContext) -> dict:
     - Looks up the handler in registry
     - Delegates to handler
     """
-    tag = _strip_ns(el.tag)
+    tag = strip_ns(el.tag)
     handler = get_handler(tag)
 
     if not handler:
         raise ValueError(f"Unrecognized XML launch construct: <{tag}>")
 
     return handler(el, context)
-
-def _strip_ns(tag: str) -> str:
-    return tag.split('}')[-1]

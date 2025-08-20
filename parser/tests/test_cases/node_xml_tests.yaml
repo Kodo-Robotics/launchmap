@@ -1,0 +1,48 @@
+tests:
+  - name: minimal_node_xml
+    description: Node with just package and executable (XML)
+    input: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <launch>
+        <node pkg="my_pkg" exec="my_node"/>
+      </launch>
+    expected:
+      nodes:
+        - package: my_pkg
+          executable: my_node
+
+  - name: node_with_fields_xml
+    description: Node with name, output, parameters and remapping (XML)
+    input: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <launch>
+        <node pkg="demo_nodes" exec="talker" name="talker_node" output="screen">
+          <param name="use_sim_time" value="$(var use_sim_time)"/>
+          <remap from="/input" to="/robot1/input"/>
+        </node>
+      </launch>
+    expected:
+      nodes:
+        - package: demo_nodes
+          executable: talker
+          name: talker_node
+          output: screen
+          parameters:
+            - use_sim_time: "${LaunchConfiguration:use_sim_time}"
+          remappings:
+            - ['/input', '/robot1/input']
+  
+  - name: multiple_nodes_xml
+    description: Two nodes declared directly under <launch>
+    input: |
+      <?xml version="1.0" encoding="UTF-8"?>
+      <launch>
+        <node pkg="demo" exec="a"/>
+        <node pkg="demo" exec="b"/>
+      </launch>
+    expected:
+      nodes:
+        - package: demo
+          executable: a
+        - package: demo
+          executable: b

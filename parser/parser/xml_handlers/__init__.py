@@ -11,19 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import importlib
-import os
-import pkgutil
-
-
-def register_builtin_handlers():
-    """
-    Auto import all modules in parsers.handlers to trigger @register_handler decorators.
-    """
-    import parser.parser.handlers
-
-    package_dir = os.path.dirname(parser.parser.handlers.__file__)
-    for _, module_name, _ in pkgutil.iter_modules([package_dir]):
-        importlib.import_module(f"parser.parser.handlers.{module_name}")
-        importlib.import_module(f"parser.parser.xml_handlers.{module_name}")

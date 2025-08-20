@@ -17,6 +17,7 @@ from xml.etree import ElementTree as ET
 from parser.context import ParseContext
 from parser.entrypoint.common import build_result
 from parser.parser.dispatcher import dispatch_element
+from parser.utils.xml_utils import strip_ns
 
 
 def parse_xml_launch_file(filepath: str) -> dict:
@@ -25,7 +26,7 @@ def parse_xml_launch_file(filepath: str) -> dict:
     Detects <launch>
     """
     root = ET.parse(filepath).getroot()
-    tag = _strip_ns(root.tag)
+    tag = strip_ns(root.tag)
     if tag != "launch":
         raise ValueError(f"Expected <launch> as root tag, found <{tag}")
 
@@ -39,7 +40,3 @@ def parse_xml_launch_file(filepath: str) -> dict:
         parsed.append(result)
 
     return build_result(filepath, parsed)
-
-
-def _strip_ns(tag: str) -> str:
-    return tag.split('}')[-1]
