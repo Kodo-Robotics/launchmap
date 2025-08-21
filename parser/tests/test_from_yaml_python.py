@@ -26,12 +26,6 @@ def test_node_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     assert result.get("nodes") == expected.get("nodes")
 
-# @pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/node_xml_tests.yaml"))
-# def test_node_parsing(code, expected):
-#     result = parse_launch_string(code, suffix=".xml")
-#     assert result.get("nodes") == expected.get("nodes")
-
-
 @pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/launch_config_tests.yaml"))
 def test_launch_configuration_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")

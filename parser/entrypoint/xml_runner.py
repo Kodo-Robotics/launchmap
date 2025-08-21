@@ -39,4 +39,4 @@ def parse_xml_launch_file(filepath: str) -> dict:
         result = dispatch_element(child, context)
         parsed.append(result)
 
-    return build_result(filepath, parsed)
+    return build_result(filepath, context, parsed)

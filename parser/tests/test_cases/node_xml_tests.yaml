@@ -18,7 +18,9 @@ tests:
       <launch>
         <node pkg="demo_nodes" exec="talker" name="talker_node" output="screen">
           <param name="use_sim_time" value="$(var use_sim_time)"/>
+          <param name="use_remapping" value="true"/>
           <remap from="/input" to="/robot1/input"/>
+          <remap from="/output" to="/robot1/output"/>
         </node>
       </launch>
     expected:
@@ -29,8 +31,10 @@ tests:
           output: screen
           parameters:
             - use_sim_time: "${LaunchConfiguration:use_sim_time}"
+            - use_remapping: "true"
           remappings:
             - ['/input', '/robot1/input']
+            - ['/output', '/robot1/output']
   
   - name: multiple_nodes_xml
     description: Two nodes declared directly under <launch>

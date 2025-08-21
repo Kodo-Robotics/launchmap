@@ -16,23 +16,12 @@ from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
-from parser.parser.xml.utils import normalize_keys, process_parameters, resolve_children
+from parser.parser.xml.utils import process_parameters
 
-
-@register_handler("node")
-def handle_node(element: ET.Element, context: ParseContext) -> dict:
+@register_handler("var")
+def handle_var(name: str, context: ParseContext) -> dict:
     """
-    Handle an XML <node> tag.
-    Processes attributes and child tags (param, remap and env).
+    Handle $(var) substitution
     """
-    kwargs = {}
-    kwargs.update(process_parameters(element, context))
-    kwargs.update(resolve_children(element, context))
-
-    if "namespace" not in kwargs:
-        ns = context.current_namespace()
-        if ns:
-            kwargs["namespace"] = ns
-
-    norm_kwargs = normalize_keys(kwargs)
-    return {"type": "Node", **norm_kwargs}
+    context.introspection.track_launch_config_usage(name)
+    return {"type": "LaunchConfiguration", "name": name}

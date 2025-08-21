@@ -16,23 +16,16 @@ from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
-from parser.parser.xml.utils import normalize_keys, process_parameters, resolve_children
+from parser.parser.xml.utils import process_parameters
 
 
-@register_handler("node")
-def handle_node(element: ET.Element, context: ParseContext) -> dict:
+@register_handler("remap")
+def handle_remap(element: ET.Element, context: ParseContext) -> dict:
     """
-    Handle an XML <node> tag.
-    Processes attributes and child tags (param, remap and env).
+    Handle an <remap> tag.
+    Converts <remap from="a" to="b" /> into ["a", "b"]
     """
     kwargs = {}
     kwargs.update(process_parameters(element, context))
-    kwargs.update(resolve_children(element, context))
 
-    if "namespace" not in kwargs:
-        ns = context.current_namespace()
-        if ns:
-            kwargs["namespace"] = ns
-
-    norm_kwargs = normalize_keys(kwargs)
-    return {"type": "Node", **norm_kwargs}
+    return {"remappings": [kwargs["from"], kwargs["to"]]}

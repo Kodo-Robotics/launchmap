@@ -19,7 +19,7 @@ from parser.parser.registry import get_handler
 from parser.parser.xml.loader import register_builtin_handlers
 from parser.parser.xml.utils import strip_ns
 
-# register_builtin_handlers()
+register_builtin_handlers()
 
 def dispatch_element(el: ET.Element, context: ParseContext) -> dict:
     """
@@ -36,3 +36,18 @@ def dispatch_element(el: ET.Element, context: ParseContext) -> dict:
         raise ValueError(f"Unrecognized XML launch construct: <{tag}>")
 
     return handler(el, context)
+
+def dispatch_substitution(expr: str, context: ParseContext):
+    expr = expr.strip()
+    if not expr:
+        return None
+    
+    parts = expr.split(maxsplit=1)
+    key = parts[0]
+    arg = parts[1] if len(parts) > 1 else ""
+
+    handler = get_handler(key)
+    if not handler:
+        return f"${{{expr}}}"
+    
+    return handler(arg, context)
