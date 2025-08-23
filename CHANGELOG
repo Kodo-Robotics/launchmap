@@ -16,6 +16,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - Reorganized the parser contents for demarcation between python and xml with common utilities
 
+## [0.1.10] - 2025-08-20
+
+### Added
+- Add a default plugin directory in case nothing is passed
+
 ## [0.1.9] - 2025-08-12
 
 ### Added

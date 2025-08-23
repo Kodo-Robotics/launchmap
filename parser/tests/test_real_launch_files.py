@@ -23,7 +23,7 @@ from parser.plugin_loader import load_user_handlers_from_directory
 BASE_DIR = os.path.dirname(__file__)
 INPUT_DIR = os.path.join(BASE_DIR, "real_cases/launch_files")
 OUTPUT_DIR = os.path.join(BASE_DIR, "real_cases/expected_outputs")
-PLUGIN_DIR = os.path.join(BASE_DIR, "real_cases/launch_files/custom_handlers")
+PLUGIN_DIR = os.path.join(BASE_DIR, "../custom_handlers")
 
 
 @pytest.mark.parametrize("filename", [f for f in os.listdir(INPUT_DIR) 
