@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ---
 
+## [0.2.0] - 2025-08-23
+
+### Added
+- XML launch file parsing support
+- Autoware XML Launch Real Test File
+
+### Changed
+- Reorganized the parser contents for demarcation between python and xml with common utilities
+
 ## [0.1.9] - 2025-08-12
 
 ### Added
