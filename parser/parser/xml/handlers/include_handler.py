@@ -17,41 +17,36 @@ from xml.etree import ElementTree as ET
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
 from parser.parser.xml.handlers.condition_handler import handle_condition
-from parser.parser.xml.utils import normalize_keys, resolve_parameters, resolve_children
+from parser.parser.xml.utils import resolve_parameters, resolve_children
 
-
-@register_handler("node")
-def handle_node(element: ET.Element, context: ParseContext) -> dict:
+@register_handler("include")
+def handle_include(element: ET.Element, context: ParseContext) -> dict:
     """
-    Handle an XML <node> tag.
-    Processes attributes and child tags (param, remap and env).
+    Handle an XML <include> tag.
+    Processes attributes and child tags (arg).
     """
     kwargs = {}
     kwargs.update(resolve_parameters(element, context))
     handle_condition(kwargs)
 
-    # Resolve remapping and parameters
-    remappings = []
-    parameters = []
+    launch_source = kwargs.get("file")
+    condition = kwargs.get("condition", None)
+
+    # Extract launch arguments
+    launch_args = {}
     children = resolve_children(element, context)
     for child in children:
-        if child["type"] == "Remapping":
-            remappings.append(child["value"])
-        elif child["type"] == "SetParameter":
-            parameters.append({child["name"]: child["value"]})
+        if child["type"] == "LaunchArguments":
+            launch_args.update(child["value"])
 
-    if len(remappings) > 0:
-        kwargs["remappings"] = remappings
-    if len(parameters) > 0:
-        kwargs["parameters"] = parameters
+    result = {
+        "type": "IncludeLaunchDescription",
+        "launch_description_source": launch_source,
+        "launch_arguments": launch_args,
+        "included": {},
+    }
 
-    # Resolve namespace
-    if "namespace" not in kwargs:
-        ns = context.current_namespace()
-        if ns:
-            kwargs["namespace"] = ns
+    if condition:
+        result["condition"] = condition
 
-    norm_kwargs = normalize_keys(
-        kwargs, {"pkg": "package", "exec": "executable"}
-    )
-    return {"type": "Node", **norm_kwargs}
+    return result

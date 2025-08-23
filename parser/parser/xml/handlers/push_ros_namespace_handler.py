@@ -12,7 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-XML_KEY_MAP = {
-    "pkg": "package",
-    "exec": "executable"
-}
+from xml.etree import ElementTree as ET
+
+from parser.context import ParseContext
+from parser.parser.registry import register_handler
+from parser.parser.xml.utils import resolve_parameters
+
+
+@register_handler("push-ros-namespace")
+def handle_node(element: ET.Element, context: ParseContext) -> dict:
+    """
+    Handle an XML <node> tag.
+    Processes attributes and child tags (param, remap and env).
+    """
+    kwargs = {}
+    kwargs.update(resolve_parameters(element, context))
+    
+    ns = kwargs.get("namespace")
+    return {"type": "PushROSNamespace", "namespace": ns}

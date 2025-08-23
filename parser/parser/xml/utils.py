@@ -15,22 +15,21 @@
 from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
-from parser.parser.xml.attribute_mapping import XML_KEY_MAP
 
 def strip_ns(tag: str) -> str:
     return tag.split('}')[-1]
 
-def normalize_keys(attrs: dict) -> dict:
+def normalize_keys(attrs: dict, key_map: dict) -> dict:
     """
     Normalize XML attribute keys to unified schema keys.
     """
     normalized = {}
     for key, value in attrs.items():
-        norm_key = XML_KEY_MAP.get(key, key)
+        norm_key = key_map.get(key, key)
         normalized[norm_key] = value
     return normalized
 
-def process_parameters(element: ET.Element, context: ParseContext):
+def resolve_parameters(element: ET.Element, context: ParseContext):
     """
     Process the parameter values from given XML tag.
     """
@@ -43,22 +42,16 @@ def process_parameters(element: ET.Element, context: ParseContext):
 def resolve_children(element: ET.Element, context: ParseContext):
     """
     Recursively resolve children of a launch XML element.
-    Returns a dict of accumulated keyword arguments (parameters, remaps, envs).
+    Returns a list of accumulated resolved children.
     """
     from parser.parser.xml.dispatcher import dispatch_element
 
-    results = {}
+    results = []
     for child in element:
         parsed = dispatch_element(child, context)
         if not parsed:
             continue
-
-        # Merge child results in results dict
-        for key, value in parsed.items():
-            if key in results:
-                results[key] = [results[key], value]
-            else:
-                results[key] = value
+        results.append(parsed)
 
     return results
 

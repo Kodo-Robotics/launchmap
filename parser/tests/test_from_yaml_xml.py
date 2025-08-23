@@ -20,9 +20,25 @@ from parser.tests.test_helpers import (
     parse_launch_string,
 )
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/node_xml_tests.yaml"))
+@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/node_tests.yaml"))
 def test_node_parsing(code, expected):
     result = parse_launch_string(code, suffix=".xml")
     print(result)
     print(expected)
     assert result.get("nodes") == expected.get("nodes")
+
+@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/launch_config_tests.yaml"))
+def test_launch_configuration_parsing(code, expected):
+    result = parse_launch_string(code, suffix=".xml")
+    print(result)
+    print(expected)
+    for key in [
+        "nodes",
+        "arguments",
+        "includes",
+        "groups",
+        "parameters",
+        "launch_argument_usages",
+        "undeclared_launch_configurations",
+    ]:
+        assert result.get(key, []) == expected.get(key, [])

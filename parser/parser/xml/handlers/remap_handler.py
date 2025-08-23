@@ -16,7 +16,7 @@ from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
-from parser.parser.xml.utils import process_parameters
+from parser.parser.xml.utils import resolve_parameters
 
 
 @register_handler("remap")
@@ -26,6 +26,6 @@ def handle_remap(element: ET.Element, context: ParseContext) -> dict:
     Converts <remap from="a" to="b" /> into ["a", "b"]
     """
     kwargs = {}
-    kwargs.update(process_parameters(element, context))
+    kwargs.update(resolve_parameters(element, context))
 
-    return {"remappings": [kwargs["from"], kwargs["to"]]}
+    return {"type": "Remapping", "value": [kwargs["from"], kwargs["to"]]}

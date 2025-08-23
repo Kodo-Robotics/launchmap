@@ -16,17 +16,26 @@ from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
-from parser.parser.xml.utils import resolve_parameters
+from parser.parser.xml.utils import normalize_keys, resolve_parameters
 
-
-@register_handler("param")
-def handle_param(element: ET.Element, context: ParseContext) -> dict:
+@register_handler("arg")
+def handle_arg(element: ET.Element, context: ParseContext) -> dict:
     """
-    Handle <param> tag.
-    Converts XML attributes (name, value) into a key-value dictionary entry.
+    Handle an XML <arg> tag.
+    - Tracks the declared argument in introspection
     """
     kwargs = {}
     kwargs.update(resolve_parameters(element, context))
 
-    name, value = kwargs["name"], kwargs["value"]
-    return {"type": "SetParameter", "name": name, "value": value}
+    # Detect if arg is used inside include tag
+    arg_value = kwargs.get("value", None)
+    if arg_value:
+        return {"type": "LaunchArguments", "value": {kwargs["name"]: kwargs["value"]}}
+
+    # Track for introspection
+    arg_name = kwargs.get("name")
+    if arg_name:
+        context.introspection.track_launch_arg_declaration(arg_name, kwargs)
+
+    norm_kwargs = normalize_keys(kwargs, {"default": "default_value"})
+    return {"type": "DeclareLaunchArgument", **norm_kwargs}

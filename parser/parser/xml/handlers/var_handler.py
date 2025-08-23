@@ -16,7 +16,6 @@ from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
-from parser.parser.xml.utils import process_parameters
 
 @register_handler("var")
 def handle_var(name: str, context: ParseContext) -> dict:
