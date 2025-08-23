@@ -1,0 +1,506 @@
+{
+  "arguments": [
+    {
+      "name": "vehicle_model",
+      "default_value": "sample_vehicle",
+      "description": "vehicle model name"
+    },
+    {
+      "name": "sensor_model",
+      "default_value": "sample_sensor_kit",
+      "description": "sensor model name"
+    },
+    {
+      "name": "pointcloud_container_name",
+      "default_value": "pointcloud_container"
+    },
+    {
+      "name": "data_path",
+      "default_value": "${EnvironmentVariable:HOME}/autoware_data",
+      "description": "packages data and artifacts directory path"
+    },
+    {
+      "name": "planning_module_preset",
+      "default_value": "default",
+      "description": "planning module preset"
+    },
+    {
+      "name": "control_module_preset",
+      "default_value": "default",
+      "description": "control module preset"
+    },
+    {
+      "name": "launch_vehicle",
+      "default_value": "true",
+      "description": "launch vehicle"
+    },
+    {
+      "name": "launch_system",
+      "default_value": "true",
+      "description": "launch system"
+    },
+    {
+      "name": "launch_map",
+      "default_value": "true",
+      "description": "launch map"
+    },
+    {
+      "name": "launch_sensing",
+      "default_value": "true",
+      "description": "launch sensing"
+    },
+    {
+      "name": "launch_sensing_driver",
+      "default_value": "true",
+      "description": "launch sensing driver"
+    },
+    {
+      "name": "launch_localization",
+      "default_value": "true",
+      "description": "launch localization"
+    },
+    {
+      "name": "launch_perception",
+      "default_value": "true",
+      "description": "launch perception"
+    },
+    {
+      "name": "launch_planning",
+      "default_value": "true",
+      "description": "launch planning"
+    },
+    {
+      "name": "launch_control",
+      "default_value": "true",
+      "description": "launch control"
+    },
+    {
+      "name": "launch_api",
+      "default_value": "true",
+      "description": "launch api"
+    },
+    {
+      "name": "use_sim_time",
+      "default_value": "false",
+      "description": "use_sim_time"
+    },
+    {
+      "name": "vehicle_id",
+      "default_value": "${EnvironmentVariable:VEHICLE_ID default}",
+      "description": "vehicle specific ID"
+    },
+    {
+      "name": "launch_vehicle_interface",
+      "default_value": "true",
+      "description": "launch vehicle interface"
+    },
+    {
+      "name": "check_external_emergency_heartbeat",
+      "default_value": "false"
+    },
+    {
+      "name": "lanelet2_map_file",
+      "default_value": "lanelet2_map.osm",
+      "description": "lanelet2 map file name"
+    },
+    {
+      "name": "pointcloud_map_file",
+      "default_value": "pointcloud_map.pcd",
+      "description": "pointcloud map file name"
+    },
+    {
+      "name": "system_run_mode",
+      "default_value": "online",
+      "description": "run mode in system"
+    },
+    {
+      "name": "launch_system_monitor",
+      "default_value": "true",
+      "description": "launch system monitor"
+    },
+    {
+      "name": "launch_dummy_diag_publisher",
+      "default_value": "false",
+      "description": "launch dummy diag publisher"
+    },
+    {
+      "name": "diagnostic_graph_aggregator_graph_path",
+      "default_value": "${FindPackageShare:autoware_launch}/config/system/diagnostics/autoware-main.yaml",
+      "description": "diagnostic graph config"
+    },
+    {
+      "name": "rviz",
+      "default_value": "true",
+      "description": "launch rviz"
+    },
+    {
+      "name": "rviz_config_name",
+      "default_value": "autoware.rviz",
+      "description": "rviz config name"
+    },
+    {
+      "name": "rviz_config",
+      "default_value": "${FindPackageShare:autoware_launch}/rviz/${LaunchConfiguration:rviz_config_name}",
+      "description": "rviz config path"
+    },
+    {
+      "name": "rviz_respawn",
+      "default_value": "true"
+    },
+    {
+      "name": "perception_mode",
+      "default_value": "lidar",
+      "description": "select perception mode. camera_lidar_radar_fusion, camera_lidar_fusion, lidar_radar_fusion, lidar, radar"
+    },
+    {
+      "name": "traffic_light_recognition/use_high_accuracy_detection",
+      "default_value": "true",
+      "description": "enable to use high accuracy detection for traffic light recognition"
+    },
+    {
+      "name": "enable_all_modules_auto_mode",
+      "default_value": "false",
+      "description": "enable all module's auto mode"
+    },
+    {
+      "name": "is_simulation",
+      "default_value": "false",
+      "description": "Autoware's behavior will change depending on whether this is a simulation or not."
+    }
+  ],
+  "groups": [
+    {
+      "scoped": "false",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_global_parameter_loader}/launch/global_params.launch.py",
+            "launch_arguments": {
+              "use_sim_time": "${LaunchConfiguration:use_sim_time}",
+              "vehicle_model": "${LaunchConfiguration:vehicle_model}"
+            },
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_vehicle}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:tier4_vehicle_launch}/launch/vehicle.launch.xml",
+            "launch_arguments": {
+              "vehicle_model": "${LaunchConfiguration:vehicle_model}",
+              "sensor_model": "${LaunchConfiguration:sensor_model}",
+              "vehicle_id": "${LaunchConfiguration:vehicle_id}",
+              "launch_vehicle_interface": "${LaunchConfiguration:launch_vehicle_interface}",
+              "config_dir": "${FindPackageShare:$(var sensor_model}_description)/config",
+              "raw_vehicle_cmd_converter_param_path": "${FindPackageShare:autoware_launch}/config/vehicle/raw_vehicle_cmd_converter/raw_vehicle_cmd_converter.param.yaml"
+            },
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_system}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_system_component.launch.xml",
+            "launch_arguments": {},
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_map}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_map_component.launch.xml",
+            "launch_arguments": {},
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_sensing}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_sensing_component.launch.xml",
+            "launch_arguments": {
+              "pointcloud_container_name": "${LaunchConfiguration:pointcloud_container_name}"
+            },
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_localization}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_localization_component.launch.xml",
+            "launch_arguments": {},
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_perception}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_perception_component.launch.xml",
+            "launch_arguments": {
+              "data_path": "${LaunchConfiguration:data_path}",
+              "pointcloud_container_name": "${LaunchConfiguration:pointcloud_container_name}"
+            },
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_planning}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_planning_component.launch.xml",
+            "launch_arguments": {
+              "module_preset": "${LaunchConfiguration:planning_module_preset}",
+              "enable_all_modules_auto_mode": "${LaunchConfiguration:enable_all_modules_auto_mode}",
+              "is_simulation": "${LaunchConfiguration:is_simulation}",
+              "use_sim_time": "${LaunchConfiguration:use_sim_time}",
+              "vehicle_model": "${LaunchConfiguration:vehicle_model}"
+            },
+            "included": {}
+          }
+        ],
+        "nodes": [
+          {
+            "package": "topic_tools",
+            "executable": "relay",
+            "name": "trajectory_relay",
+            "parameters": {
+              "input_topic": "/planning/trajectory",
+              "output_topic": "/planning/scenario_planning/trajectory"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_control}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_control_component.launch.xml",
+            "launch_arguments": {
+              "module_preset": "${LaunchConfiguration:control_module_preset}",
+              "use_sim_time": "${LaunchConfiguration:use_sim_time}",
+              "vehicle_model": "${LaunchConfiguration:vehicle_model}"
+            },
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "condition": "${IfCondition:${LaunchConfiguration:launch_api}}",
+      "actions": {
+        "includes": [
+          {
+            "launch_description_source": "${FindPackageShare:autoware_launch}/launch/components/tier4_autoware_api_component.launch.xml",
+            "launch_arguments": {
+              "use_sim_time": "${LaunchConfiguration:use_sim_time}",
+              "vehicle_model": "${LaunchConfiguration:vehicle_model}"
+            },
+            "included": {}
+          }
+        ]
+      }
+    },
+    {
+      "actions": {
+        "nodes": [
+          {
+            "package": "rviz2",
+            "executable": "rviz2",
+            "name": "rviz2",
+            "output": "screen",
+            "args": "-d ${LaunchConfiguration:rviz_config} -s ${FindPackageShare:autoware_launch}/rviz/image/autoware.png",
+            "respawn": "${LaunchConfiguration:rviz_respawn}",
+            "condition": "${IfCondition:${LaunchConfiguration:rviz}}",
+            "env": {
+              "QT_QPA_PLATFORMTHEME": "qt5ct"
+            }
+          }
+        ]
+      }
+    }
+  ],
+  "includes": [
+    {
+      "launch_description_source": "${FindPackageShare:autoware_launch}/launch/pointcloud_container.launch.py",
+      "launch_arguments": {
+        "use_multithread": "true",
+        "container_name": "${LaunchConfiguration:pointcloud_container_name}"
+      },
+      "included": {}
+    }
+  ],
+  "launch_argument_usages": [
+    {
+      "argument": "rviz_config_name",
+      "path": "arguments[28].default_value"
+    },
+    {
+      "argument": "pointcloud_container_name",
+      "path": "includes[0].launch_arguments.container_name"
+    },
+    {
+      "argument": "use_sim_time",
+      "path": "groups[0].actions.includes[0].launch_arguments.use_sim_time"
+    },
+    {
+      "argument": "vehicle_model",
+      "path": "groups[0].actions.includes[0].launch_arguments.vehicle_model"
+    },
+    {
+      "argument": "launch_vehicle",
+      "path": "groups[1].condition"
+    },
+    {
+      "argument": "vehicle_model",
+      "path": "groups[1].actions.includes[0].launch_arguments.vehicle_model"
+    },
+    {
+      "argument": "sensor_model",
+      "path": "groups[1].actions.includes[0].launch_arguments.sensor_model"
+    },
+    {
+      "argument": "vehicle_id",
+      "path": "groups[1].actions.includes[0].launch_arguments.vehicle_id"
+    },
+    {
+      "argument": "launch_vehicle_interface",
+      "path": "groups[1].actions.includes[0].launch_arguments.launch_vehicle_interface"
+    },
+    {
+      "argument": "launch_system",
+      "path": "groups[2].condition"
+    },
+    {
+      "argument": "launch_map",
+      "path": "groups[3].condition"
+    },
+    {
+      "argument": "launch_sensing",
+      "path": "groups[4].condition"
+    },
+    {
+      "argument": "pointcloud_container_name",
+      "path": "groups[4].actions.includes[0].launch_arguments.pointcloud_container_name"
+    },
+    {
+      "argument": "launch_localization",
+      "path": "groups[5].condition"
+    },
+    {
+      "argument": "launch_perception",
+      "path": "groups[6].condition"
+    },
+    {
+      "argument": "data_path",
+      "path": "groups[6].actions.includes[0].launch_arguments.data_path"
+    },
+    {
+      "argument": "pointcloud_container_name",
+      "path": "groups[6].actions.includes[0].launch_arguments.pointcloud_container_name"
+    },
+    {
+      "argument": "launch_planning",
+      "path": "groups[7].condition"
+    },
+    {
+      "argument": "planning_module_preset",
+      "path": "groups[7].actions.includes[0].launch_arguments.module_preset"
+    },
+    {
+      "argument": "enable_all_modules_auto_mode",
+      "path": "groups[7].actions.includes[0].launch_arguments.enable_all_modules_auto_mode"
+    },
+    {
+      "argument": "is_simulation",
+      "path": "groups[7].actions.includes[0].launch_arguments.is_simulation"
+    },
+    {
+      "argument": "use_sim_time",
+      "path": "groups[7].actions.includes[0].launch_arguments.use_sim_time"
+    },
+    {
+      "argument": "vehicle_model",
+      "path": "groups[7].actions.includes[0].launch_arguments.vehicle_model"
+    },
+    {
+      "argument": "launch_control",
+      "path": "groups[8].condition"
+    },
+    {
+      "argument": "control_module_preset",
+      "path": "groups[8].actions.includes[0].launch_arguments.module_preset"
+    },
+    {
+      "argument": "use_sim_time",
+      "path": "groups[8].actions.includes[0].launch_arguments.use_sim_time"
+    },
+    {
+      "argument": "vehicle_model",
+      "path": "groups[8].actions.includes[0].launch_arguments.vehicle_model"
+    },
+    {
+      "argument": "launch_api",
+      "path": "groups[9].condition"
+    },
+    {
+      "argument": "use_sim_time",
+      "path": "groups[9].actions.includes[0].launch_arguments.use_sim_time"
+    },
+    {
+      "argument": "vehicle_model",
+      "path": "groups[9].actions.includes[0].launch_arguments.vehicle_model"
+    },
+    {
+      "argument": "rviz_config",
+      "path": "groups[10].actions.nodes[0].args"
+    },
+    {
+      "argument": "rviz_respawn",
+      "path": "groups[10].actions.nodes[0].respawn"
+    },
+    {
+      "argument": "rviz",
+      "path": "groups[10].actions.nodes[0].condition"
+    }
+  ],
+  "environment_variables": [
+    {
+      "name": "QT_QPA_PLATFORMTHEME",
+      "value": "qt5ct"
+    }
+  ],
+  "environment_variable_usages": [
+    {
+      "argument": "HOME",
+      "path": "arguments[3].default_value"
+    }
+  ]
+}

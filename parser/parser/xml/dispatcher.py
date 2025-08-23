@@ -46,7 +46,7 @@ def dispatch_substitution(expr: str, context: ParseContext):
     key = parts[0]
     arg = parts[1] if len(parts) > 1 else ""
 
-    handler = get_handler(key)
+    handler = get_handler(f"subst:{key}")
     if not handler:
         return f"${{{expr}}}"
     

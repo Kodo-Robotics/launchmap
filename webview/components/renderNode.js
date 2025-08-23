@@ -44,17 +44,20 @@ function renderNode(node, options) {
   block.appendChild(renderSection('executable', '▶️', 'Executable', node.executable, renderOptions));
   block.appendChild(renderSection('output', '🖥️', 'Output', node.output || '—', renderOptions));
 
-  if (node.condition) {
-    block.appendChild(renderSection('condition', '❓', 'Condition', node.condition, renderOptions));
-  }
+  // Render additional sections
+  const metaSections = [
+    { key: 'condition', icon: '❓', label: 'Condition', value: node.condition },
+    { key: 'parameters', icon: '⚙️', label: 'Params', value: node.parameters },
+    { key: 'arguments', icon: '💬', label: 'Args', value: node.arguments },
+    { key: 'env', icon: '🌍', label: 'Environment Variables', value: node.env }
+  ];
 
-  if (node.parameters?.length > 0) {
-    block.appendChild(renderSection('parameters', '⚙️', 'Params', node.parameters, renderOptions));
-  }
-
-  if (node.arguments?.length > 0) {
-    block.appendChild(renderSection('arguments', '💬', 'Args', node.arguments, renderOptions));
-  }
+  metaSections.forEach(({ key, icon, label, value }) => {
+    if (value) {
+      const section = renderSection(key, icon, label, value, renderOptions);
+      block.appendChild(section);
+    }
+  });
 
   return block;
 }

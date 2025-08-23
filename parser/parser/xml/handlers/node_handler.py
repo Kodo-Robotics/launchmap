@@ -31,19 +31,22 @@ def handle_node(element: ET.Element, context: ParseContext) -> dict:
     handle_condition(kwargs)
 
     # Resolve remapping and parameters
-    remappings = []
-    parameters = []
+    remappings = []; parameters = {}; environment_vars = {}
     children = resolve_children(element, context)
     for child in children:
         if child["type"] == "Remapping":
             remappings.append(child["value"])
         elif child["type"] == "SetParameter":
-            parameters.append({child["name"]: child["value"]})
+            parameters.update({child["name"]: child["value"]})
+        elif child["type"] == "EnvironmentVariable":
+            environment_vars.update({child["name"]: child["value"]})
 
     if len(remappings) > 0:
         kwargs["remappings"] = remappings
     if len(parameters) > 0:
         kwargs["parameters"] = parameters
+    if len(environment_vars) > 0:
+        kwargs["env"] = environment_vars
 
     # Resolve namespace
     if "namespace" not in kwargs:

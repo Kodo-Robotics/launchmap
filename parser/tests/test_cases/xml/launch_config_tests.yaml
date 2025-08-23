@@ -32,10 +32,10 @@ tests:
         - package: demo
           executable: run
           parameters:
-            - use_sim_time: "${LaunchConfiguration:use_sim_time}"
+            use_sim_time: "${LaunchConfiguration:use_sim_time}"
       launch_argument_usages:
         - argument: use_sim_time
-          path: nodes[0].parameters[0].use_sim_time
+          path: nodes[0].parameters.use_sim_time
       undeclared_launch_configurations: []
 
   - name: include_with_launch_arguments_xml
@@ -144,9 +144,9 @@ tests:
         - package: demo
           executable: missing
           parameters:
-            - param: "${LaunchConfiguration:not_declared}"
+            param: "${LaunchConfiguration:not_declared}"
       launch_argument_usages:
         - argument: not_declared
-          path: nodes[0].parameters[0].param
+          path: nodes[0].parameters.param
       undeclared_launch_configurations:
         - not_declared

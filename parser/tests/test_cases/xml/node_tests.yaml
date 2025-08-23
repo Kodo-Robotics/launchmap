@@ -30,8 +30,8 @@ tests:
           name: talker_node
           output: screen
           parameters:
-            - use_sim_time: "${LaunchConfiguration:use_sim_time}"
-            - use_remapping: "true"
+              use_sim_time: "${LaunchConfiguration:use_sim_time}"
+              use_remapping: "true"
           remappings:
             - ['/input', '/robot1/input']
             - ['/output', '/robot1/output']
@@ -50,3 +50,21 @@ tests:
           executable: a
         - package: demo
           executable: b
+
+  - name: node_with_environment_variable_xml
+    description: Node with Environment Variables
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <node pkg="demo_pkg" exec="talker">
+          <env name="RCUTILS_LOG_LEVEL" value="debug"/>
+          <env name="CUSTOM" value="42"/>
+        </node>
+      </launch>
+    expected:
+      nodes:
+        - package: demo_pkg
+          executable: talker
+          env:
+            RCUTILS_LOG_LEVEL: debug
+            CUSTOM: "42"

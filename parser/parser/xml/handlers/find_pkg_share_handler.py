@@ -15,7 +15,7 @@
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
 
-@register_handler("find-pkg-share")
+@register_handler("subst:find-pkg-share")
 def handle_find_package_share(name: str, context: ParseContext) -> dict:
     """
     Handle $(find-pkg-share) substitution

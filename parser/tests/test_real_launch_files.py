@@ -26,7 +26,8 @@ OUTPUT_DIR = os.path.join(BASE_DIR, "real_cases/expected_outputs")
 PLUGIN_DIR = os.path.join(BASE_DIR, "real_cases/launch_files/custom_handlers")
 
 
-@pytest.mark.parametrize("filename", [f for f in os.listdir(INPUT_DIR) if f.endswith(".py")])
+@pytest.mark.parametrize("filename", [f for f in os.listdir(INPUT_DIR) 
+                                      if f.endswith(".py") or f.endswith(".xml")])
 def test_real_launch_file_snapshot(filename):
     input_path = os.path.join(INPUT_DIR, filename)
     output_path = os.path.join(OUTPUT_DIR, f"{filename}.json")
