@@ -15,10 +15,9 @@
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
 
-@register_handler("var")
-def handle_var(name: str, context: ParseContext) -> dict:
+@register_handler("find-pkg-share")
+def handle_find_package_share(name: str, context: ParseContext) -> dict:
     """
-    Handle $(var) substitution
+    Handle $(find-pkg-share) substitution
     """
-    context.introspection.track_launch_config_usage(name)
-    return {"type": "LaunchConfiguration", "name": name}
+    return {"type": "FindPackageShare", "package": str(name)}

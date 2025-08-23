@@ -42,3 +42,36 @@ def test_launch_configuration_parsing(code, expected):
         "undeclared_launch_configurations",
     ]:
         assert result.get(key, []) == expected.get(key, [])
+
+@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/group_action_tests.yaml"))
+def test_group_action_parsing(code, expected):
+    result = parse_launch_string(code, suffix=".xml")
+    for key in ["nodes", "arguments", "includes", "groups", "launch_argument_usages"]:
+        assert result.get(key, []) == expected.get(key, [])
+
+@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/include_launch_tests.yaml"))
+def test_include_launch_parsing(code, expected):
+    result = parse_launch_string(code, suffix=".xml")
+    print(result)
+    print(expected)
+    for key in [
+        "arguments",
+        "includes",
+        "launch_argument_usages",
+        "undeclared_launch_configurations",
+    ]:
+        assert result.get(key, []) == expected.get(key, [])
+
+@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/condition_tests.yaml"))
+def test_conditions_parsing(code, expected):
+    result = parse_launch_string(code, suffix=".xml")
+    print(expected)
+    print(result)
+    for key in [
+        "arguments",
+        "nodes",
+        "groups",
+        "launch_argument_usages",
+        "undeclared_launch_configurations",
+    ]:
+        assert result.get(key, []) == expected.get(key, [])

@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import re
 from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
+from parser.parser.postprocessing import simplify_launch_configurations
 
 def strip_ns(tag: str) -> str:
     return tag.split('}')[-1]
@@ -62,10 +64,30 @@ def _process_value(value: str, context: ParseContext):
     Otherwise, return as plain string.
     """
     from parser.parser.xml.dispatcher import dispatch_substitution
+    SUBST_PATTERN = re.compile(r"\$\(([^)]+)\)")
 
     if value is None:
         return None
     value = value.strip()
+    if not value:
+        return value
+
+    out = []
+    last = 0
+    for match in SUBST_PATTERN.finditer(value):
+        start, end = match.span()
+        if start > last:
+            out.append(value[last:start])
+        expr = match.group(1).strip()
+        subst = dispatch_substitution(expr, context)
+        out.append(simplify_launch_configurations(subst))
+        last = end
+    
+    if last < len(value):
+        out.append(value[last:])
+    
+    return "".join(out)
+
     if value.startswith("$(") and value.endswith(")"):
         expr = value[2:-1]
         return dispatch_substitution(expr, context)
