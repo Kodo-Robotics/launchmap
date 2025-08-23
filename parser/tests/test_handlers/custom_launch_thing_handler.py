@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parser.parser.user_handler import register_user_handler
+from parser.parser.python.user_handler import register_user_handler
 
 
 @register_user_handler("MyCustomLaunchThing")

@@ -40,8 +40,8 @@ def load_custom_handler_tests(file_path, handler_directory):
     return load_yaml_tests(file_path)
 
 
-def parse_launch_string(code: str) -> dict:
-    with tempfile.NamedTemporaryFile("w", suffix=".py", delete=False) as tmp:
+def parse_launch_string(code: str, suffix) -> dict:
+    with tempfile.NamedTemporaryFile("w", suffix=suffix, delete=False) as tmp:
         tmp.write(code)
         tmp.flush()
         return parse_and_format_launch_file(tmp.name)

@@ -1,0 +1,152 @@
+tests:
+  - name: declared_argument_basic_xml
+    description: Declare an argument only
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="robot_name" default="turtle" description="The robot's name"/>
+      </launch>
+    expected:
+      arguments:
+        - name: robot_name
+          default_value: turtle
+          description: The robot's name
+      launch_argument_usages: []
+      undeclared_launch_configurations: []
+
+  - name: node_parameter_usage_xml
+    description: Use LaunchConfiguration in Node parameter
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="use_sim_time" default="true"/>
+        <node pkg="demo" exec="run">
+          <param name="use_sim_time" value="$(var use_sim_time)"/>
+        </node>
+      </launch>
+    expected:
+      arguments:
+        - name: use_sim_time
+          default_value: 'true'
+      nodes:
+        - package: demo
+          executable: run
+          parameters:
+            use_sim_time: "${LaunchConfiguration:use_sim_time}"
+      launch_argument_usages:
+        - argument: use_sim_time
+          path: nodes[0].parameters.use_sim_time
+      undeclared_launch_configurations: []
+
+  - name: include_with_launch_arguments_xml
+    description: Use LaunchConfiguration in Include arguments
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="map_file" default="maps/map.yaml"/>
+        <include file="sub_launch.py">
+          <arg name="map" value="$(var map_file)"/>
+        </include>
+      </launch>
+    expected:
+      arguments:
+        - name: map_file
+          default_value: maps/map.yaml
+      includes:
+        - launch_description_source: sub_launch.py
+          launch_arguments:
+            map: "${LaunchConfiguration:map_file}"
+          included: {}
+      launch_argument_usages:
+        - argument: map_file
+          path: includes[0].launch_arguments.map
+      undeclared_launch_configurations: []
+  
+  - name: push_ros_namespace_from_config_xml
+    description: LaunchConfiguration used in PushROSNamespace inside Group
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="robot_namespace" default="robot1"/>
+        <group>
+          <push-ros-namespace namespace="$(var robot_namespace)"/>
+          <node pkg="demo" exec="x"/>
+        </group>
+      </launch>
+    expected:
+      arguments:
+        - name: robot_namespace
+          default_value: robot1
+      groups:
+        - namespace: "${LaunchConfiguration:robot_namespace}"
+          actions:
+            nodes:
+              - package: demo
+                executable: x
+      launch_argument_usages:
+        - argument: robot_namespace
+          path: groups[0].namespace
+      undeclared_launch_configurations: []
+
+  - name: set_parameter_with_config_xml
+    description: Use LaunchConfiguration in SetParameter value
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="mode" default="auto"/>
+        <param name="mode" value="$(var mode)"/>
+      </launch>
+    expected:
+      arguments:
+        - name: mode
+          default_value: auto
+      parameters:
+        - name: mode
+          value: "${LaunchConfiguration:mode}"
+      launch_argument_usages:
+        - argument: mode
+          path: parameters[0].value
+      undeclared_launch_configurations: []
+
+  - name: condition_with_config_xml
+    description: Use LaunchConfiguration inside IfCondition
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="enable" default="true"/>
+        <node pkg="demo" exec="cond_node" if="$(var enable)" />
+      </launch>
+    expected:
+      arguments:
+        - name: enable
+          default_value: 'true'
+      nodes:
+        - package: demo
+          executable: cond_node
+          condition: "${IfCondition:${LaunchConfiguration:enable}}"
+      launch_argument_usages:
+        - argument: enable
+          path: nodes[0].condition
+      undeclared_launch_configurations: []
+
+  - name: undeclared_config_error_xml
+    description: LaunchConfiguration used without declaration
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <node pkg="demo" exec="missing">
+          <param name="param" value="$(var not_declared)"/>
+        </node>
+      </launch>
+    expected:
+      arguments: []
+      nodes:
+        - package: demo
+          executable: missing
+          parameters:
+            param: "${LaunchConfiguration:not_declared}"
+      launch_argument_usages:
+        - argument: not_declared
+          path: nodes[0].parameters.param
+      undeclared_launch_configurations:
+        - not_declared

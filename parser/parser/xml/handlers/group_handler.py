@@ -12,25 +12,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ast
+from xml.etree import ElementTree as ET
 
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
-from parser.parser.utils.common import flatten_once, group_entities_by_type
-from parser.resolution.utils import resolve_call_signature
+from parser.parser.utils import flatten_once, group_entities_by_type
+from parser.parser.xml.handlers.condition_handler import handle_condition
+from parser.parser.xml.utils import resolve_children, resolve_parameters
 
 
-@register_handler("GroupAction", "launch.actions.GroupAction")
-def handle_group_action(node: ast.Call, context: ParseContext) -> dict:
+@register_handler("group")
+def handle_group(element: ET.Element, context: ParseContext) -> dict:
     """
-    Handle GroupAction(actions=[...])
-    - Resolves all actions recursively
-    - Pushes/pops namespace scope if PushRosNamespace is found
+    Handle an XML <group> tag.
+    Processes attributes and child tags (param, remap and env).
     """
-    args, kwargs = resolve_call_signature(node, context.engine)
+    kwargs = {}
+    kwargs.update(resolve_parameters(element, context))
+    handle_condition(kwargs)
 
-    # Resolve 'actions' argument (can be list, var, starred)
-    raw_expr = kwargs.get("actions") or (args[0] if args else [])
+    # Resolve 'actions' under group
+    raw_expr = resolve_children(element, context)
     resolved_flat = flatten_once(raw_expr)
 
     namespace = None

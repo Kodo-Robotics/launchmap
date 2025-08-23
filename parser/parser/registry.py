@@ -12,23 +12,32 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ast
 import warnings
-from typing import Callable, Dict, Optional
+from typing import Any, Callable, Dict, Optional
 
 from parser.context import ParseContext
 
+# Handler signature: accepts a construct (AST Call, XML Element etc.) + context
+Handler = Callable[[Any, "ParseContext"], Optional[dict]]
+
 # Registry dictionary for known launch constructs
-_HANDLER_REGISTRY: Dict[str, Callable[[ast.Call, "ParseContext"], Optional[dict]]] = {}
+_HANDLER_REGISTRY: Dict[str, Handler] = {}
 
 
 def register_handler(*names: str):
     """
     Decorator to register a handler for a given launch construct.
-    Example: @register_handler("Node") registers a handler for launch_ros.actions.Node.
+    
+    For Python-based launch:
+        @register_handler("Node", "launch_ros.actions.Node")
+
+    For XML-based launch:
+        @register_handler("node)
+
+    You can register multiple aliases pointing to the same handler.
     """
 
-    def decorator(func: Callable[[ast.Call, "ParseContext"], Optional[dict]]):
+    def decorator(func: Handler):
         for name in names:
             if name in _HANDLER_REGISTRY:
                 warnings.warn(f"Overwriting existing handler for '{name}'")
@@ -38,14 +47,14 @@ def register_handler(*names: str):
     return decorator
 
 
-def get_handler(name: str) -> Optional[Callable[[ast.Call, "ParseContext"], Optional[dict]]]:
+def get_handler(name: str) -> Optional[Handler]:
     """
     Retrieve the handler for a given construct, or None if unregistered
     """
     return _HANDLER_REGISTRY.get(name)
 
 
-def all_registered() -> Dict[str, Callable]:
+def all_registered() -> Dict[str, Handler]:
     """
     Return the complete handler map (useful for debugging or listing).
     """

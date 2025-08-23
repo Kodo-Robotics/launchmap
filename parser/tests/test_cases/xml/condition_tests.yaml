@@ -1,0 +1,54 @@
+tests:
+  - name: node_with_if_condition_xml
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="enable_talker"/>
+        <node pkg="demo_pkg" exec="talker" if="$(var enable_talker)"/>
+      </launch>
+    expected:
+      arguments:
+        - name: enable_talker
+      nodes:
+        - package: demo_pkg
+          executable: talker
+          condition: ${IfCondition:${LaunchConfiguration:enable_talker}}
+      launch_argument_usages:
+        - argument: enable_talker
+          path: nodes[0].condition
+      undeclared_launch_configurations: []
+  
+  - name: node_with_unless_condition_constant_xml
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <node pkg="demo_pkg" exec="listener" unless="$(eval False)"/>
+      </launch>
+    expected:
+      nodes:
+        - package: demo_pkg
+          executable: listener
+          condition: ${UnlessCondition:${PythonExpression:False}}
+
+  - name: group_with_condition_and_node_xml
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <arg name="launch_group"/>
+        <group if="$(var launch_group)">
+          <node pkg="demo_pkg" exec="child_node"/>
+        </group>
+      </launch>
+    expected:
+      arguments:
+        - name: launch_group
+      groups:
+        - condition: ${IfCondition:${LaunchConfiguration:launch_group}}
+          actions:
+            nodes:
+              - package: demo_pkg
+                executable: child_node
+      launch_argument_usages:
+        - argument: launch_group
+          path: groups[0].condition
+      undeclared_launch_configurations: []

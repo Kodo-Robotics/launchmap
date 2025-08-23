@@ -21,7 +21,7 @@ from parser.parser.introspection_utils import (
     collect_python_variable_usages,
 )
 from parser.parser.postprocessing import simplify_launch_configurations
-from parser.parser.utils.common import group_entities_by_type
+from parser.parser.utils import group_entities_by_type
 
 
 def parse_and_format_launch_file(filepath: str) -> dict:

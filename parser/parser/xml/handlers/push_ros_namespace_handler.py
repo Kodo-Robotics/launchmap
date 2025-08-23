@@ -12,17 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import importlib
-import os
-import pkgutil
+from xml.etree import ElementTree as ET
+
+from parser.context import ParseContext
+from parser.parser.registry import register_handler
+from parser.parser.xml.utils import resolve_parameters
 
 
-def register_builtin_handlers():
+@register_handler("push-ros-namespace")
+def handle_node(element: ET.Element, context: ParseContext) -> dict:
     """
-    Auto import all modules in parsers.handlers to trigger @register_handler decorators.
+    Handle an XML <node> tag.
+    Processes attributes and child tags (param, remap and env).
     """
-    import parser.parser.handlers
-
-    package_dir = os.path.dirname(parser.parser.handlers.__file__)
-    for _, module_name, _ in pkgutil.iter_modules([package_dir]):
-        importlib.import_module(f"parser.parser.handlers.{module_name}")
+    kwargs = {}
+    kwargs.update(resolve_parameters(element, context))
+    
+    ns = kwargs.get("namespace")
+    return {"type": "PushROSNamespace", "namespace": ns}

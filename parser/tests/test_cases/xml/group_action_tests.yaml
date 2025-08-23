@@ -1,0 +1,77 @@
+tests:
+  - name: basic_group_with_node_xml
+    description: A group with a single node child
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <group>
+          <node pkg="demo" exec="basic"/>
+        </group>
+      </launch>
+    expected:
+      groups:
+        - actions:
+            nodes:
+              - package: demo
+                executable: basic
+  
+  - name: group_with_namespace_xml
+    description: Group with PushROSNamespace
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <group>
+          <push-ros-namespace namespace="robot1"/>
+          <node pkg="demo" exec="ns_node"/>
+        </group>
+      </launch>
+    expected:
+      groups:
+        - namespace: robot1
+          actions:
+            nodes:
+              - package: demo
+                executable: ns_node
+  
+  - name: group_with_multiple_nodes_xml
+    description: Group with mutiple child nodes
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <group>
+          <node pkg="demo" exec="a"/>
+          <node pkg="demo" exec="b"/>
+        </group>
+      </launch>
+    expected:
+      groups:
+        - actions:
+            nodes:
+              - package: demo
+                executable: a
+              - package: demo
+                executable: b
+  
+  - name: nested_groups_xml
+    description: Nested groups with namespace and node
+    input: |
+      <?xml version="1.0"?>
+      <launch>
+        <group>
+          <push-ros-namespace namespace="outer_ns"/>
+          <group>
+            <push-ros-namespace namespace="inner_ns"/>
+            <node pkg="demo" exec="deep"/>
+          </group>
+        </group>
+      </launch>
+    expected:
+      groups:
+        - namespace: outer_ns
+          actions:
+            groups:
+              - namespace: inner_ns
+                actions:
+                  nodes:
+                    - package: demo
+                      executable: deep

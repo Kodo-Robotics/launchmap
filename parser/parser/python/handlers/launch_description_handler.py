@@ -12,17 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parser.entrypoint.common import detect_format_from_content
-from parser.entrypoint.python_runner import parse_python_launch_file
-from parser.entrypoint.xml_runner import parse_xml_launch_file
+import ast
+
+from parser.context import ParseContext
+from parser.parser.registry import register_handler
+from parser.parser.utils import flatten_once
+from parser.resolution.utils import resolve_call_signature
 
 
-def parse_launch_file(filepath: str) -> dict:
-    with open(filepath, "r", encoding="utf-8") as f:
-        code = f.read()
+@register_handler("LaunchDescription", "launch.LaunchDescription")
+def handle_launch_description(node: ast.Call, context: ParseContext) -> dict:
+    args, _ = resolve_call_signature(node, context.engine)
 
-    kind = detect_format_from_content(code)
+    if args:
+        arg = args[0]
+        return flatten_once(arg) if isinstance(arg, list) else [arg]
 
-    if kind == "xml":
-        return parse_xml_launch_file(filepath)
-    return parse_python_launch_file(filepath)
+    return []

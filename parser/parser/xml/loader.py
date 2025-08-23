@@ -12,17 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parser.entrypoint.common import detect_format_from_content
-from parser.entrypoint.python_runner import parse_python_launch_file
-from parser.entrypoint.xml_runner import parse_xml_launch_file
+import importlib
+import os
+import pkgutil
 
 
-def parse_launch_file(filepath: str) -> dict:
-    with open(filepath, "r", encoding="utf-8") as f:
-        code = f.read()
+def register_builtin_handlers():
+    """
+    Auto import all modules in parsers.handlers to trigger @register_handler decorators.
+    """
+    import parser.parser.xml.handlers
 
-    kind = detect_format_from_content(code)
-
-    if kind == "xml":
-        return parse_xml_launch_file(filepath)
-    return parse_python_launch_file(filepath)
+    package_dir = os.path.dirname(parser.parser.xml.handlers.__file__)
+    for _, module_name, _ in pkgutil.iter_modules([package_dir]):
+        importlib.import_module(f"parser.parser.xml.handlers.{module_name}")

@@ -15,7 +15,7 @@
 import ast
 
 from parser.context import ParseContext
-from parser.parser.loader import register_builtin_handlers
+from parser.parser.python.loader import register_builtin_handlers
 from parser.parser.registry import get_handler
 from parser.resolution.utils import get_func_name
 

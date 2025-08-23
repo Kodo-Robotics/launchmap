@@ -12,9 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from xml.etree import ElementTree as ET
 
-def is_symbolic(value):
+from parser.context import ParseContext
+from parser.parser.registry import register_handler
+from parser.parser.xml.utils import resolve_parameters
+
+
+@register_handler("param")
+def handle_param(element: ET.Element, context: ParseContext) -> dict:
     """
-    Determines if a value is symbolic (non-concrete) object from the resolution engine.
+    Handle <param> tag.
+    Converts XML attributes (name, value) into a key-value dictionary entry.
     """
-    return isinstance(value, dict) and "type" in value
+    kwargs = {}
+    kwargs.update(resolve_parameters(element, context))
+
+    name, value = kwargs["name"], kwargs["value"]
+    return {"type": "SetParameter", "name": name, "value": value}

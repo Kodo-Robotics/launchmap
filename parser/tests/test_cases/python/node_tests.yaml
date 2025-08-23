@@ -114,3 +114,24 @@ tests:
           executable: robot_node
           parameters:
             - robot_description: "${Command:['xacro', 'robot.urdf.xacro']}"
+
+  - name: node_with_environment_variable
+    input: |
+      from launch import LaunchDescription
+      from launch_ros.actions import Node
+
+      def generate_launch_description():
+          return LaunchDescription([
+              Node(
+                  package="demo_pkg",
+                  executable="talker",
+                  env={"RCUTILS_LOG_LEVEL": "debug", "CUSTOM": "42"}
+              )
+          ])
+    expected:
+      nodes:
+        - package: demo_pkg
+          executable: talker
+          env:
+            RCUTILS_LOG_LEVEL: debug
+            CUSTOM: "42"

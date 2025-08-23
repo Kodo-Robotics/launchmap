@@ -12,17 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parser.entrypoint.common import detect_format_from_content
-from parser.entrypoint.python_runner import parse_python_launch_file
-from parser.entrypoint.xml_runner import parse_xml_launch_file
+from xml.etree import ElementTree as ET
+
+from parser.context import ParseContext
+from parser.parser.registry import register_handler
+from parser.parser.xml.utils import resolve_parameters
 
 
-def parse_launch_file(filepath: str) -> dict:
-    with open(filepath, "r", encoding="utf-8") as f:
-        code = f.read()
+@register_handler("remap")
+def handle_remap(element: ET.Element, context: ParseContext) -> dict:
+    """
+    Handle an <remap> tag.
+    Converts <remap from="a" to="b" /> into ["a", "b"]
+    """
+    kwargs = {}
+    kwargs.update(resolve_parameters(element, context))
 
-    kind = detect_format_from_content(code)
-
-    if kind == "xml":
-        return parse_xml_launch_file(filepath)
-    return parse_python_launch_file(filepath)
+    return {"type": "Remapping", "value": [kwargs["from"], kwargs["to"]]}

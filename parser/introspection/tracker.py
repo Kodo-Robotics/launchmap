@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from parser.parser.utils.common import compute_entity_key
+from parser.parser.utils import compute_entity_key
 
 
 class IntrospectionTracker:

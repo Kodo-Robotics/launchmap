@@ -13,17 +13,22 @@
 # limitations under the License.
 
 from parser.parser.postprocessing import simplify_launch_configurations
-from parser.parser.python.user_handler import register_user_handler
-from parser.resolution.utils import resolve_call_kwargs
 
 
-@register_user_handler("RewrittenYaml")
-def handle_rewritten_yaml(node, context):
-    """
-    Handler for RewrittenYaml
-    """
-    kwargs = resolve_call_kwargs(node, context.engine)
+def handle_condition(kwargs: dict):
+    if "if" in kwargs:
+        _handle_if_condition(kwargs)
+    elif "unless" in kwargs:
+        _handle_unless_condition(kwargs)
 
-    return simplify_launch_configurations(
-        {"type": "CustomHandler", "type_name": "RewrittenYaml", **kwargs}
-    )
+    return
+
+def _handle_if_condition(kwargs: dict):
+    expression = simplify_launch_configurations(kwargs["if"])
+    kwargs.pop("if", None)
+    kwargs["condition"] = f"${{IfCondition:{expression}}}"
+
+def _handle_unless_condition(kwargs: dict):
+    expression = simplify_launch_configurations(kwargs["unless"])
+    kwargs.pop("unless", None)
+    kwargs["condition"] = f"${{UnlessCondition:{expression}}}"

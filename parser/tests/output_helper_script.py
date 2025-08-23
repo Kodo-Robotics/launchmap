@@ -25,7 +25,7 @@ PLUGIN_DIR = "parser/tests/real_cases/launch_files/custom_handlers"
 load_user_handlers_from_directory(PLUGIN_DIR)
 
 for fname in os.listdir(INPUT_DIR):
-    if fname.endswith(".py"):
+    if fname.endswith(".py") or fname.endswith('.xml'):
         input_path = os.path.join(INPUT_DIR, fname)
         result = parse_and_format_launch_file(input_path)
 
