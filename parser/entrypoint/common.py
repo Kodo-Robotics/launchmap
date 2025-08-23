@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import io
 from typing import List
+
 from parser.context import ParseContext
-import xml.etree.ElementTree as ET
+
 
 def build_result(filepath: str, context: ParseContext, parsed: List):
     """

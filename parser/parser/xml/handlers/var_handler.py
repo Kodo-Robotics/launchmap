@@ -15,6 +15,7 @@
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
 
+
 @register_handler("subst:var")
 def handle_var(name: str, context: ParseContext) -> dict:
     """

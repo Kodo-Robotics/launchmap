@@ -26,7 +26,8 @@ def test_node_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     assert result.get("nodes") == expected.get("nodes")
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/python/launch_config_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/python/launch_config_tests.yaml"))
 def test_launch_configuration_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     for key in [
@@ -41,14 +42,16 @@ def test_launch_configuration_parsing(code, expected):
         assert result.get(key, []) == expected.get(key, [])
 
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/python/group_action_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                        load_yaml_tests("test_cases/python/group_action_tests.yaml"))
 def test_group_action_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     for key in ["nodes", "arguments", "includes", "groups", "launch_argument_usages"]:
         assert result.get(key, []) == expected.get(key, [])
 
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/python/include_launch_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/python/include_launch_tests.yaml"))
 def test_include_launch_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     for key in [
@@ -60,7 +63,8 @@ def test_include_launch_parsing(code, expected):
         assert result.get(key, []) == expected.get(key, [])
 
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/python/opaque_function_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/python/opaque_function_tests.yaml"))
 def test_opaque_functions_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     for key in [
@@ -72,7 +76,8 @@ def test_opaque_functions_parsing(code, expected):
         assert result.get(key, []) == expected.get(key, [])
 
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/python/condition_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/python/condition_tests.yaml"))
 def test_conditions_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     for key in [
@@ -85,7 +90,8 @@ def test_conditions_parsing(code, expected):
         assert result.get(key, []) == expected.get(key, [])
 
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/python/composable_node_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/python/composable_node_tests.yaml"))
 def test_composable_nodes_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     for key in [
@@ -98,7 +104,8 @@ def test_composable_nodes_parsing(code, expected):
         assert result.get(key, []) == expected.get(key, [])
 
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/python/event_handler_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/python/event_handler_tests.yaml"))
 def test_event_handlers_parsing(code, expected):
     result = parse_launch_string(code, suffix=".py")
     for key in ["nodes", "event_handlers"]:

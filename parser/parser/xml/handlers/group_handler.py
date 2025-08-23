@@ -18,7 +18,8 @@ from parser.context import ParseContext
 from parser.parser.registry import register_handler
 from parser.parser.utils import flatten_once, group_entities_by_type
 from parser.parser.xml.handlers.condition_handler import handle_condition
-from parser.parser.xml.utils import resolve_parameters, resolve_children
+from parser.parser.xml.utils import resolve_children, resolve_parameters
+
 
 @register_handler("group")
 def handle_group(element: ET.Element, context: ParseContext) -> dict:

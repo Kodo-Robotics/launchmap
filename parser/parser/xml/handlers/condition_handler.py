@@ -14,6 +14,7 @@
 
 from parser.parser.postprocessing import simplify_launch_configurations
 
+
 def handle_condition(kwargs: dict):
     if "if" in kwargs:
         _handle_if_condition(kwargs)

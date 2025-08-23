@@ -17,7 +17,8 @@ from xml.etree import ElementTree as ET
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
 from parser.parser.xml.handlers.condition_handler import handle_condition
-from parser.parser.xml.utils import resolve_parameters, resolve_children
+from parser.parser.xml.utils import resolve_children, resolve_parameters
+
 
 @register_handler("include")
 def handle_include(element: ET.Element, context: ParseContext) -> dict:

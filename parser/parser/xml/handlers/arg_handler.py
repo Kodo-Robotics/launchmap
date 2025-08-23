@@ -18,6 +18,7 @@ from parser.context import ParseContext
 from parser.parser.registry import register_handler
 from parser.parser.xml.utils import normalize_keys, resolve_parameters
 
+
 @register_handler("arg")
 def handle_arg(element: ET.Element, context: ParseContext) -> dict:
     """

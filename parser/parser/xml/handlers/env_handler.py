@@ -18,6 +18,7 @@ from parser.context import ParseContext
 from parser.parser.registry import register_handler
 from parser.parser.xml.utils import resolve_parameters
 
+
 @register_handler("env")
 def handle_environment_variable(element: ET.Element, context: ParseContext):
     """

@@ -18,6 +18,7 @@ from xml.etree import ElementTree as ET
 from parser.context import ParseContext
 from parser.parser.postprocessing import simplify_launch_configurations
 
+
 def strip_ns(tag: str) -> str:
     return tag.split('}')[-1]
 

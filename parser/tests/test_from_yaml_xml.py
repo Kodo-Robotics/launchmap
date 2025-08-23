@@ -16,12 +16,14 @@ import pytest
 
 from parser.tests.test_helpers import load_yaml_tests, parse_launch_string
 
+
 @pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/node_tests.yaml"))
 def test_node_parsing(code, expected):
     result = parse_launch_string(code, suffix=".xml")
     assert result.get("nodes") == expected.get("nodes")
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/launch_config_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/xml/launch_config_tests.yaml"))
 def test_launch_configuration_parsing(code, expected):
     result = parse_launch_string(code, suffix=".xml")
     print(result)
@@ -43,7 +45,8 @@ def test_group_action_parsing(code, expected):
     for key in ["nodes", "arguments", "includes", "groups", "launch_argument_usages"]:
         assert result.get(key, []) == expected.get(key, [])
 
-@pytest.mark.parametrize("code,expected", load_yaml_tests("test_cases/xml/include_launch_tests.yaml"))
+@pytest.mark.parametrize("code,expected", 
+                         load_yaml_tests("test_cases/xml/include_launch_tests.yaml"))
 def test_include_launch_parsing(code, expected):
     result = parse_launch_string(code, suffix=".xml")
     print(result)

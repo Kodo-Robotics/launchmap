@@ -17,7 +17,7 @@ from xml.etree import ElementTree as ET
 from parser.context import ParseContext
 from parser.parser.registry import register_handler
 from parser.parser.xml.handlers.condition_handler import handle_condition
-from parser.parser.xml.utils import normalize_keys, resolve_parameters, resolve_children
+from parser.parser.xml.utils import normalize_keys, resolve_children, resolve_parameters
 
 
 @register_handler("node")
@@ -31,7 +31,9 @@ def handle_node(element: ET.Element, context: ParseContext) -> dict:
     handle_condition(kwargs)
 
     # Resolve remapping and parameters
-    remappings = []; parameters = {}; environment_vars = {}
+    remappings = []
+    parameters = {}
+    environment_vars = {}
     children = resolve_children(element, context)
     for child in children:
         if child["type"] == "Remapping":
